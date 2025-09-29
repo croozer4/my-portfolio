@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
+import kkLogo from '../assets/img/kk-logo.svg';
 
 defineProps({
     msg: String,
@@ -11,7 +12,8 @@ const count = ref(0)
 <template>
     <div class="navbar bg-base-100 shadow-sm">
         <div class="flex-1">
-            <a class="btn btn-ghost text-xl">daisyUI</a>
+            <a class="btn btn-ghost text-xl"><img :src="kkLogo" alt="Logo" class="h-8 stroke-current" />
+            </a>
         </div>
         <div class="flex-none">
             <button class="btn btn-square btn-ghost">

@@ -157,7 +157,7 @@ const showMore = ref(false);
 
     <!-- Przycisk Show More -->
     <div class="flex justify-center my-6">
-        <button class="btn btn-primary" @click="showMore = !showMore">
+        <button class="btn btn-primary btn-wide" @click="showMore = !showMore">
             {{ showMore ? "Show less" : "Show more" }}
         </button>
     </div>
