@@ -9,17 +9,20 @@ const count = ref(0)
 </script>
 
 <template>
-    <div class="hero bg-base-200 min-h-screen">
-        <div class="hero-content flex-col lg:flex-row-reverse">
-            <img src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
-                class="max-w-sm rounded-lg shadow-2xl" />
+    <div class="hero bg-base-200 min-h-screen w-full p-0">
+        <div class="w-full hero-content flex-col lg:flex-row-reverse align-start justify-end">
             <div>
-                <h1 class="text-5xl font-bold">Box Office News!</h1>
-                <p class="py-6">
-                    Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-                    quasi. In deleniti eaque aut repudiandae et a id nisi.
+                <p class="text-3xl py-6 font-bold">
+                    Hi there,
                 </p>
-                <button class="btn btn-primary">Get Started</button>
+                <p class="text-3xl"><span class="font-bold text-blue-500"> > > > </span> I'm Konrad</p>
+                <p class="text-4xl py-6 font-bold">
+                    Web and Software Developer
+                </p>
+                <div class="flex gap-4">
+                    <button class="btn bg-blue-500">Contact Me</button>
+                    <button class="btn btn-outline btn-warning">My resume</button>
+                </div>
             </div>
         </div>
     </div>
