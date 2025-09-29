@@ -40,8 +40,8 @@ onMounted(() => {
 
 <template>
     <div class="hero bg-base-200 h-[calc(100vh-64px)] w-full p-0 overflow-clip relative">
-        <div class="w-full hero-content flex-col lg:flex-row-reverse align-start justify-end">
-            <div>
+        <div class="w-full h-full hero-content flex-col items-center lg:items-start justify-start lg:justify-center mt-20 lg:mt-0">
+            <div class="text-center lg:text-left">
                 <p class="text-3xl py-6 font-bold">
                     Hi there,
                 </p>
@@ -52,9 +52,9 @@ onMounted(() => {
                 <p class="text-4xl py-6 font-bold">
                     Web and Software Developer<span class="font-bold text-colorful">.</span>
                 </p>
-                <div class="flex gap-4">
-                    <button class="btn-c-filled btn">Contact Me</button>
-                    <button class="btn-c-outline btn">My resume
+                <div class="flex gap-4 items-center justify-center lg:justify-start">
+                    <button class="btn-c-filled btn w-[45%] sm:w-auto">Contact Me</button>
+                    <button class="btn-c-outline btn w-[45%] sm:w-auto">My resume
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -66,12 +66,13 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="small-circle"></div>
-        <div class="big-circle"></div>
-        <div class="shape1 font-black rotate-[-10deg]">{ }</div>
-        <div class="shape2 font-black">&lt;/&gt;</div>
-        <div class="shape3 font-black rotate-[10deg]">[ ]</div>
-
+        <div class="w-full h-full flex-col items-start justify-end lg:justify-center">
+            <div class="small-circle"></div>
+            <div class="big-circle"></div>
+            <div class="shape1 font-black rotate-[-10deg]">{ }</div>
+            <div class="shape2 font-black">.dev</div>
+            <div class="shape3 font-black rotate-[10deg]">[ ]</div>
+        </div>
 
     </div>
 </template>
@@ -130,8 +131,8 @@ onMounted(() => {
 
 .shape2 {
     position: absolute;
-    top: 200px;
-    right: 200px;
+    top: 180px;
+    right: 150px;
     font-size: 150px;
     color: transparent;
     z-index: 7;
@@ -193,5 +194,39 @@ onMounted(() => {
     background-color: tomato !important;
     border: none;
     color: white;
+}
+
+@media (max-width: 1024px) {
+  .small-circle {
+    height: 200px;
+    width: 200px;
+    top: 580px;
+    right: 220px;
+  }
+
+  .big-circle {
+    height: 400px;
+    width: 400px;
+    top: 380px;
+    right: 0px;
+  }
+
+  .shape1 {
+    font-size: 60px;
+    top: 380px;
+    right: 300px;
+  }
+
+  .shape2 {
+    font-size: 80px;
+    top: 520px;
+    right: 120px;
+  }
+
+  .shape3 {
+    font-size: 60px;
+    top: 680px;
+    right: 50px;
+  }
 }
 </style>
