@@ -33,14 +33,24 @@ onMounted(() => {
         gsap.to(shape2El, { x: cx * 0.1, y: cy * 0.1, duration: 0.3, ease: 'power2.out' })
         gsap.to(shape3El, { x: cx * 0.05, y: cy * 0.08, duration: 0.3, ease: 'power2.out' })
     }
-    window.addEventListener('mousemove', mouseHandler)
+    if (window.matchMedia('(pointer:fine)').matches) {
+        window.addEventListener('mousemove', mouseHandler)
+    }
+
+})
+
+onUnmounted(() => {
+    if (mouseHandler) {
+        window.removeEventListener('mousemove', mouseHandler)
+    }
 })
 
 </script>
 
 <template>
     <div class="hero bg-base-200 h-[calc(100vh-64px)] w-full p-0 overflow-clip relative">
-        <div class="w-full h-full hero-content flex-col items-center lg:items-start justify-start lg:justify-center mt-20 lg:mt-0">
+        <div
+            class="w-full h-full hero-content flex-col items-center lg:items-start justify-start lg:justify-center mt-20 lg:mt-0">
             <div class="text-center lg:text-left">
                 <p class="text-3xl py-6 font-bold">
                     Hi there,
@@ -93,11 +103,9 @@ onMounted(() => {
     height: 350px;
     width: 350px;
     background-color: rgba(255, 88, 59, 0.342);
-    /* background: linear-gradient(45deg, rgb(255, 111, 71), rgba(255, 99, 71, 0)); */
     border-radius: 50%;
     z-index: 6;
 
-    /* animation: float 10s infinite; */
     filter: blur(2px);
 
 }
@@ -109,7 +117,6 @@ onMounted(() => {
     height: 600px;
     width: 600px;
     background-color: rgba(255, 99, 71, 0.27);
-    /* background: linear-gradient(45deg, tomato, rgba(255, 99, 71, 0.295)); */
     border-radius: 50%;
     z-index: 1;
     filter: blur(5px);
@@ -169,11 +176,11 @@ onMounted(() => {
     color: white;
 }
 
-.btn-c-filled:focus {
+/* .btn-c-filled:focus {
     background-color: #ff6347 !important;
     border: none;
     color: white;
-}
+} */
 
 .btn-c-outline {
     border: 2px solid tomato !important;
@@ -190,43 +197,43 @@ onMounted(() => {
     color: white;
 }
 
-.btn-c-outline:focus {
+/* .btn-c-outline:focus {
     background-color: tomato !important;
     border: none;
     color: white;
-}
+} */
 
 @media (max-width: 1024px) {
-  .small-circle {
-    height: 200px;
-    width: 200px;
-    top: 580px;
-    right: 220px;
-  }
+    .small-circle {
+        height: 200px;
+        width: 200px;
+        top: 580px;
+        right: 220px;
+    }
 
-  .big-circle {
-    height: 400px;
-    width: 400px;
-    top: 380px;
-    right: 0px;
-  }
+    .big-circle {
+        height: 400px;
+        width: 400px;
+        top: 380px;
+        right: 0px;
+    }
 
-  .shape1 {
-    font-size: 60px;
-    top: 380px;
-    right: 300px;
-  }
+    .shape1 {
+        font-size: 60px;
+        top: 380px;
+        right: 300px;
+    }
 
-  .shape2 {
-    font-size: 80px;
-    top: 520px;
-    right: 120px;
-  }
+    .shape2 {
+        font-size: 80px;
+        top: 520px;
+        right: 120px;
+    }
 
-  .shape3 {
-    font-size: 60px;
-    top: 680px;
-    right: 50px;
-  }
+    .shape3 {
+        font-size: 60px;
+        top: 680px;
+        right: 50px;
+    }
 }
 </style>

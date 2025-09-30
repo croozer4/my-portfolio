@@ -4,12 +4,16 @@ import { ref } from 'vue'
 // obrazki
 import seenemaImg from '../assets/img/seenema.png'
 
-
 defineProps({
     msg: String,
 })
 
-const count = ref(0)
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css'; // podstawowe style
+import 'swiper/css/navigation'; // jeśli chcesz strzałki
+import 'swiper/css/pagination'; // jeśli chcesz kropki
+
+import { Navigation, Pagination } from 'swiper/modules';
 
 const showMore = ref(false);
 </script>
@@ -133,7 +137,7 @@ const showMore = ref(false);
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        Extra Project
+                        Statki
                         <div class="badge badge-secondary">Vue</div>
                     </h2>
                     <p>Hidden project that appears after clicking "Show more".</p>
@@ -165,19 +169,38 @@ const showMore = ref(false);
     <!-- Modale -->
 
     <!-- Open the modal using ID.showModal() method -->
-<!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
-<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold">Seenema</h3>
-    <p class="py-4">Press ESC key or click the button below to close</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <!-- if there is a button in form, it will close the modal -->
-        <button class="btn">Close</button>
-      </form>
-    </div>
-  </div>
-</dialog>
+    <!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
+    <dialog id="my_modal_5" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <h3 class="text-lg font-bold">Seenema</h3>
+            <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
+                :loop="true" class="w-full h-[400px]">
+                <SwiperSlide>
+                    <img src="https://picsum.photos/id/1015/800/400" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide>
+                    <img src="https://picsum.photos/id/1016/800/400" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide>
+                    <img src="https://picsum.photos/id/1018/800/400" class="w-full h-full object-cover" />
+                </SwiperSlide>
+            </Swiper>
+            <p class="py-4">Seenema is a full-stack web application we developed as a team project together with my
+                colleagues Maciej Rataj and Marcel Wójcik. It’s designed for cinema management and online ticket booking. The system includes features
+                such as role-based access (super admin, admin, employee, customer), JWT authentication with automatic
+                session refresh, account registration and recovery, as well as seat selection and booking confirmation.</p>
+
+            <p class="py-4">On the technical side, we used React + Vite, Tailwind CSS, and NextUI for the frontend, and
+                Django REST Framework with PostgreSQL for the backend. The modular structure of the app allowed us to
+                work in parallel on different parts of the system and keep the codebase scalable and maintainable.</p>
+            <div class="modal-action">
+                <form method="dialog">
+                    <!-- if there is a button in form, it will close the modal -->
+                    <button class="btn">Close</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
 
 </template>
 
