@@ -3,12 +3,14 @@ import HelloWorld from './components/HelloWorld.vue'
 import Navbar from './components/Navbar.vue';
 import Hero from './components/Hero.vue';
 import MyProjects from './components/MyProjects.vue';
+import MyExperience from './components/MyExperience.vue';
 </script>
 
 <template>
   <Navbar />
   <Hero />
   <MyProjects />
+  <MyExperience />
 </template>
 
 <style scoped>

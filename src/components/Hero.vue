@@ -116,7 +116,7 @@ onUnmounted(() => {
     right: 0px;
     height: 600px;
     width: 600px;
-    background-color: rgba(255, 99, 71, 0.27);
+    background-color: rgba(255, 99, 71, 0.582);
     border-radius: 50%;
     z-index: 1;
     filter: blur(5px);
