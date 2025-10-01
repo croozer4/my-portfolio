@@ -6,6 +6,7 @@ import seenemaImg from '../assets/img/seenema.jpg'
 import quikbookImg from '../assets/img/quikbook.jpg'
 import pocketPalImg from '../assets/img/pocketpal.jpg'
 import snapStatsImg from '../assets/img/snapstats.jpg'
+import ratePlayImg from '../assets/img/rateplay.jpg'
 
 // obrazki do swipera seenema
 import seenemaSwiperImg1 from '../assets/img/seenema/seenema1.jpg'
@@ -35,6 +36,15 @@ import snapStatsSwiperImg4 from '../assets/img/snapstats/snapstats4.jpg'
 import snapStatsSwiperImg5 from '../assets/img/snapstats/snapstats5.jpg'
 import snapStatsSwiperImg6 from '../assets/img/snapstats/snapstats6.jpg'
 import snapStatsSwiperImg7 from '../assets/img/snapstats/snapstats7.jpg'
+
+//obrazki do swipera rateplay
+import ratePlaySwiperImg1 from '../assets/img/rateplay/rateplay1.jpg'
+import ratePlaySwiperImg2 from '../assets/img/rateplay/rateplay2.jpg'
+import ratePlaySwiperImg3 from '../assets/img/rateplay/rateplay3.jpg'
+import ratePlaySwiperImg4 from '../assets/img/rateplay/rateplay4.jpg'
+import ratePlaySwiperImg5 from '../assets/img/rateplay/rateplay5.jpg'
+import ratePlaySwiperImg6 from '../assets/img/rateplay/rateplay6.jpg'
+import ratePlaySwiperImg7 from '../assets/img/rateplay/rateplay7.jpg'
 
 
 defineProps({
@@ -128,16 +138,17 @@ const showMore = ref(false);
                 </div>
             </div>
 
-            <div class="card bg-base-100 w-full shadow-sm">
+            <div class="card bg-base-100 w-full shadow-sm" onclick="rateplay_modal.showModal()">
                 <figure>
-                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
+                    <img :src="ratePlayImg" alt="RatePlay" />
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
                         RatePlay
-                        <div class="badge badge-secondary">Vue</div>
+                        <div class="badge badge-secondary">Angular</div>
+                        <div class="badge badge-secondary">Gemini API</div>
                     </h2>
-                    <p>Hidden project that appears after clicking "Show more".</p>
+                    <p>Online app for game enthusiasts to connect and share experiences.</p>
                 </div>
             </div>
 
@@ -392,6 +403,70 @@ const showMore = ref(false);
                 user Authentication and reliable data storage via Firestore. This architectural choice ensures the
                 application is highly scalable, secure, and provides continuous availability for handling complex
                 photographic and community data efficiently.
+            </p>
+        </div>
+    </dialog>
+
+    <dialog id="rateplay_modal" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+            </form>
+            <h3 class="text-2xl font-bold pb-4">Project - RatePlay</h3>
+            <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
+                :loop="true" class="w-full sm:h-[400px] h-[400px]">
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg1" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg2" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg3" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg4" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg5" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg6" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="ratePlaySwiperImg7" class="w-full h-full object-cover" />
+                </SwiperSlide>
+            </Swiper>
+            <p class="pt-8">
+                RatePlay is a comprehensive web platform created for computer game enthusiasts. The core goal of the
+                project is to build an active social community that allows users to rate their favorite titles and
+                write detailed reviews. The rating and reviewing system is the heart of this application, fostering
+                interaction and exchange of ideas among digital entertainment fans. The application frontend is built
+                with Angular and TypeScript, ensuring a robust and scalable structure. A modern and responsive
+                user interface is achieved using Tailwind CSS and the DaisyUI component library, which together
+                create a minimalist, clean, and cohesive design. The application is fully responsive, working equally
+                well on mobile and desktop devices.
+            </p>
+
+            <p class="pt-8">
+                The project implements full support for all five required API endpoints (public, authentication,
+                authenticated, admin, and LLM). The central element is the authentication modal, which contains all
+                user account functionalities: login, registration, account activation, password change, and recovery.
+                Logged-in users can view, sort, and rate games. All token-authenticated API endpoints have been
+                implemented, including key functions related to game reviews (adding, editing, and deleting reviews and
+                ratings). For users with administrator privileges, a dedicated panel allows for user management,
+                including adding new accounts, controlling their activity status, and granting admin rights.
+            </p>
+
+            <p class="pt-8">
+                From a technical perspective, the project uses routing to navigate between different views (e.g.,
+                game list, admin panel). Business logic and API communication are implemented using five custom
+                services (`admin`, `auth`, `games`, `gemini`, `reviews`), which utilize Angular's `HttpClient`.
+                Additional features include multiple API uses for sending emails during key processes (registration
+                confirmation, temporary password, password reset). A key differentiator is the integration with an LLM
+                model API (Gemini AI). These functions are available in a dedicated "Artificial Intelligence" tab and
+                include generating random games, fetching games by ID, and generating titles based on a description.
+                Furthermore, on each game's page, there is an option to generate an AI review summary.
             </p>
         </div>
     </dialog>
