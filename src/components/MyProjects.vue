@@ -197,7 +197,7 @@ const showMore = ref(false);
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        Extra Project
+                        Next Project
                         <div class="badge badge-secondary">Vue</div>
                     </h2>
                     <p>Hidden project that appears after clicking "Show more".</p>
