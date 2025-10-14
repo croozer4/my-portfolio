@@ -4,6 +4,7 @@ import Navbar from './components/Navbar.vue';
 import Hero from './components/Hero.vue';
 import MyProjects from './components/MyProjects.vue';
 import MyExperience from './components/MyExperience.vue';
+import Contact from './components/Contact.vue';
 </script>
 
 <template>
@@ -11,6 +12,7 @@ import MyExperience from './components/MyExperience.vue';
   <Hero />
   <MyProjects />
   <MyExperience />
+  <Contact />
 </template>
 
 <style scoped>

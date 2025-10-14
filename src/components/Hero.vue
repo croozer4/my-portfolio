@@ -50,7 +50,7 @@ onUnmounted(() => {
 <template>
     <div class="hero bg-base-200 h-[calc(100vh-64px)] w-full p-0 overflow-clip relative">
         <div
-            class="w-full h-full hero-content flex-col items-center lg:items-start justify-start lg:justify-center mt-20 lg:mt-0">
+            class="w-full h-full hero-content flex-col items-center lg:items-start justify-start lg:justify-center mt-20 lg:mt-0 select-none">
             <div class="text-center lg:text-left">
                 <p class="text-3xl py-6 font-bold">
                     Hi there,
