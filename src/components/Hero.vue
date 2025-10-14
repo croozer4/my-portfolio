@@ -11,6 +11,14 @@ const scrollToContact = () => {
   el?.scrollIntoView({ behavior: 'smooth' });
 };
 
+const downloadResume = () => {
+  const link = document.createElement('a');
+  link.href = '../assets/cv/CV_Konrad_Kulesza_2025.pdf';
+  link.download = 'CV_Konrad_Kulesza_2025.pdf';
+  link.click();
+};
+
+
 let mouseHandler: (e: MouseEvent) => void
 
 let smallCircleEl: HTMLElement | null = null
@@ -67,7 +75,7 @@ onUnmounted(() => {
                 </p>
                 <div class="flex gap-4 items-center justify-center lg:justify-start">
                     <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">Contact Me</button>
-                    <button class="btn-c-outline btn w-[45%] sm:w-auto">My resume
+                    <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">My resume
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"

@@ -136,7 +136,7 @@ const showMore = ref(false);
     <!-- Ukryte projekty -->
     <transition name="fade" mode="out-in">
         <!-- SnapStats Card -->
-        <div v-if="showMore"
+        <div v-show="showMore"
             class="grid gap-8 grid-cols-1 lg:grid-cols-3 p-8 max-w-screen-xl mx-auto justify-items-center">
             <div class="card bg-base-100 w-full shadow-sm" onclick="snapstats_modal.showModal()">
                 <figure>
