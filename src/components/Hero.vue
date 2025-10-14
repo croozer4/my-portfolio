@@ -6,7 +6,10 @@ defineProps({
     msg: String,
 })
 
-const count = ref(0)
+const scrollToContact = () => {
+  const el = document.getElementById('contact-section');
+  el?.scrollIntoView({ behavior: 'smooth' });
+};
 
 let mouseHandler: (e: MouseEvent) => void
 
@@ -63,7 +66,7 @@ onUnmounted(() => {
                     Web and Software Developer<span class="font-bold text-colorful">.</span>
                 </p>
                 <div class="flex gap-4 items-center justify-center lg:justify-start">
-                    <button class="btn-c-filled btn w-[45%] sm:w-auto">Contact Me</button>
+                    <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">Contact Me</button>
                     <button class="btn-c-outline btn w-[45%] sm:w-auto">My resume
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">

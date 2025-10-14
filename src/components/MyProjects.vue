@@ -8,6 +8,7 @@ import pocketPalImg from '../assets/img/pocketpal.jpg'
 import snapStatsImg from '../assets/img/snapstats.jpg'
 import ratePlayImg from '../assets/img/rateplay.jpg'
 import pongSTM32Img from '../assets/img/pong-stm32.jpg'
+import asteroidsImg from '../assets/img/asteroids.jpg'
 
 // obrazki do swipera seenema
 import seenemaSwiperImg1 from '../assets/img/seenema/seenema1.jpg'
@@ -50,6 +51,11 @@ import ratePlaySwiperImg7 from '../assets/img/rateplay/rateplay7.jpg'
 //obrazki do swipera pongstm32
 import pongSTM32SwiperImg1 from '../assets/img/pongstm/pongstm1.jpg'
 import pongSTM32SwiperImg2 from '../assets/img/pongstm/pongstm2.jpg'
+
+//obrazki do swipera asteroids
+import asteroidsSwiperImg1 from '../assets/img/asteroids/asteroids1.jpg'
+import asteroidsSwiperImg2 from '../assets/img/asteroids/asteroids2.jpg'
+import asteroidsSwiperImg3 from '../assets/img/asteroids/asteroids3.jpg'
 
 defineProps({
     msg: String,
@@ -109,19 +115,19 @@ const showMore = ref(false);
                 </div>
             </div>
 
-            <!-- PocketPal Card -->
-            <div class="card bg-base-100 w-full shadow-sm transition-all duration-500"
-                onclick="pocketpal_modal.showModal()" :class="{ 'lg:mt-20': !showMore }">
+            <!-- RatePlay Card -->
+            <div class="card bg-base-100 w-full shadow-sm" onclick="rateplay_modal.showModal()"
+                :class="{ 'lg:mt-20': !showMore }">
                 <figure>
-                    <img :src="pocketPalImg" alt="PocketPal" />
+                    <img :src="ratePlayImg" alt="RatePlay" />
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        PocketPal
-                        <div class="badge badge-secondary">Typescript</div>
-                        <div class="badge badge-secondary">Firebase</div>
+                        RatePlay
+                        <div class="badge badge-secondary">Angular</div>
+                        <div class="badge badge-secondary">Gemini API</div>
                     </h2>
-                    <p>Track your spending and manage finances with visualized data.</p>
+                    <p>Online app for game enthusiasts to connect and share experiences.</p>
                 </div>
             </div>
         </div>
@@ -146,18 +152,19 @@ const showMore = ref(false);
                 </div>
             </div>
 
-            <!-- RatePlay Card -->
-            <div class="card bg-base-100 w-full shadow-sm" onclick="rateplay_modal.showModal()">
+            <!-- PocketPal Card -->
+            <div class="card bg-base-100 w-full shadow-sm transition-all duration-500"
+                onclick="pocketpal_modal.showModal()">
                 <figure>
-                    <img :src="ratePlayImg" alt="RatePlay" />
+                    <img :src="pocketPalImg" alt="PocketPal" />
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        RatePlay
-                        <div class="badge badge-secondary">Angular</div>
-                        <div class="badge badge-secondary">Gemini API</div>
+                        PocketPal
+                        <div class="badge badge-secondary">Typescript</div>
+                        <div class="badge badge-secondary">Firebase</div>
                     </h2>
-                    <p>Online app for game enthusiasts to connect and share experiences.</p>
+                    <p>Track your spending and manage finances with visualized data.</p>
                 </div>
             </div>
 
@@ -189,16 +196,18 @@ const showMore = ref(false);
                 </div>
             </div>
 
-            <div class="card bg-base-100 w-full shadow-sm">
+            <!-- Asteroids Card -->
+            <div class="card bg-base-100 w-full shadow-sm" onclick="asteroids_modal.showModal()">
                 <figure>
-                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
+                    <img :src="asteroidsImg" alt="Asteroids" />
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        Statki
-                        <div class="badge badge-secondary">Vue</div>
+                        Asteroids
+                        <div class="badge badge-secondary">QT</div>
+                        <div class="badge badge-secondary">C++</div>
                     </h2>
-                    <p>Hidden project that appears after clicking "Show more".</p>
+                    <p>Asteroids game made with C++ and Qt with smooth controls and physics.</p>
                 </div>
             </div>
 
@@ -209,9 +218,10 @@ const showMore = ref(false);
                 <div class="card-body">
                     <h2 class="card-title">
                         Next Project
-                        <div class="badge badge-secondary">Vue</div>
+                        <div class="badge badge-secondary">?</div>
+                        <div class="badge badge-secondary">?</div>
                     </h2>
-                    <p>Hidden project that appears after clicking "Show more".</p>
+                    <p>More projects coming very soon!</p>
                 </div>
             </div>
         </div>
@@ -507,6 +517,37 @@ const showMore = ref(false);
                 movement. Control is handled via potentiometers. This project was a very engaging experience in embedded
                 programming, allowing me to deepen my understanding of low-level hardware interaction and
                 microcontroller software development. </p>
+        </div>
+    </dialog>
+
+    <!-- Asteroids Modal -->
+    <dialog id="asteroids_modal" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+            </form>
+            <h3 class="text-2xl font-bold pb-4">Project - Asteroids</h3>
+            <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
+                :loop="true" class="w-full sm:h-[400px] h-[400px]">
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="asteroidsSwiperImg1" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="asteroidsSwiperImg2" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="asteroidsSwiperImg3" class="w-full h-full object-cover" />
+                </SwiperSlide>
+            </Swiper>
+            <p class="pt-8"> The ASTEROIDS project was developed as part of coursework at the university of technology.
+                It was created using Qt and C++, and it simulates a classic space arcade game where the player controls
+                a spaceship in an asteroid field. The ship features smooth movement mechanics, including acceleration,
+                deceleration, and rotation, providing a realistic flying experience. Asteroids spawn with random sizes
+                and bounce off each other dynamically, creating a lively and unpredictable environment. The player can
+                shoot projectiles to destroy asteroids and earn points, while collisions with them reduce the number of
+                lives. The game also includes scoring and life tracking systems. This project was a highly engaging and
+                educational experience, allowing me to strengthen my skills in object-oriented programming, physics
+                simulation, and interactive GUI development in Qt. </p>
         </div>
     </dialog>
 
