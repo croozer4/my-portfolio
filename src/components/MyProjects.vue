@@ -69,7 +69,7 @@ const showMore = ref(false);
         <!-- ciemny kolor -->
         <h1 class="text-xl lg:text-5xl font-bold my-8 pl-8 text-gray-800">My Projects</h1>
         <!-- Karty projektów -->
-         
+
         <div
             class="grid gap-8 grid-cols-1 lg:grid-cols-3 p-8 pb-0 max-w-screen-xl mx-auto justify-items-center items-start">
 
@@ -106,7 +106,6 @@ const showMore = ref(false);
                 </div>
             </div>
 
-            <!-- przesun w dol o 20px -->
             <!-- PocketPal Card -->
             <div class="card bg-base-100 w-full shadow-sm transition-all duration-500"
                 onclick="pocketpal_modal.showModal()" :class="{ 'lg:mt-20': !showMore }">
@@ -217,7 +216,7 @@ const showMore = ref(false);
 
     <!-- Przycisk Show More -->
     <div class="flex justify-center my-6">
-        <button class="btn btn-primary btn-wide" @click="showMore = !showMore">
+        <button class="btn btn-primary btn-wide !bg-base-100" @click="showMore = !showMore">
             {{ showMore ? "Show less" : "Show more" }}
         </button>
     </div>
@@ -513,37 +512,13 @@ const showMore = ref(false);
                     <img :src="ratePlaySwiperImg7" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">
-                RatePlay is a comprehensive web platform created for computer game enthusiasts. The core goal of the
-                project is to build an active social community that allows users to rate their favorite titles and
-                write detailed reviews. The rating and reviewing system is the heart of this application, fostering
-                interaction and exchange of ideas among digital entertainment fans. The application frontend is built
-                with Angular and TypeScript, ensuring a robust and scalable structure. A modern and responsive
-                user interface is achieved using Tailwind CSS and the DaisyUI component library, which together
-                create a minimalist, clean, and cohesive design. The application is fully responsive, working equally
-                well on mobile and desktop devices.
-            </p>
-
-            <p class="pt-8">
-                The project implements full support for all five required API endpoints (public, authentication,
-                authenticated, admin, and LLM). The central element is the authentication modal, which contains all
-                user account functionalities: login, registration, account activation, password change, and recovery.
-                Logged-in users can view, sort, and rate games. All token-authenticated API endpoints have been
-                implemented, including key functions related to game reviews (adding, editing, and deleting reviews and
-                ratings). For users with administrator privileges, a dedicated panel allows for user management,
-                including adding new accounts, controlling their activity status, and granting admin rights.
-            </p>
-
-            <p class="pt-8">
-                From a technical perspective, the project uses routing to navigate between different views (e.g.,
-                game list, admin panel). Business logic and API communication are implemented using five custom
-                services (`admin`, `auth`, `games`, `gemini`, `reviews`), which utilize Angular's `HttpClient`.
-                Additional features include multiple API uses for sending emails during key processes (registration
-                confirmation, temporary password, password reset). A key differentiator is the integration with an LLM
-                model API (Gemini AI). These functions are available in a dedicated "Artificial Intelligence" tab and
-                include generating random games, fetching games by ID, and generating titles based on a description.
-                Furthermore, on each game's page, there is an option to generate an AI review summary.
-            </p>
+            <p class="pt-8"> The PONG STM32 project was created as part of coursework at the university of technology.
+                The task was to develop a program for the STM32 development board in C language. I decided to create
+                something interesting — a Pong game that supports two players and includes a simple AI. The game
+                features scorekeeping, game reset functionality, and ball bouncing mechanics that respond to the paddle
+                movement. Control is handled via potentiometers. This project was a very engaging experience in embedded
+                programming, allowing me to deepen my understanding of low-level hardware interaction and
+                microcontroller software development. </p>
         </div>
     </dialog>
 

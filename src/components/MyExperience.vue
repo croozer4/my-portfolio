@@ -13,6 +13,10 @@ defineProps({
             <!-- ciemny kolor -->
             <h1 class="!text-5xl font-bold my-8 pl-8 text-white pt-8">My Experience</h1>
 
+            <!-- cos tu napisz -->
+
+            <p class="pl-8 pr-8">A graduate in IT with a passion for web technologies and beyond. I am fully motivated to gain valuable professional experience. My strengths include dedication, quick learning, and a commitment to innovative and flawless solutions. I already have initial professional experience, gained partly through international internships.</p>
+
             <div class="w-full flex p-8 pl-0">
 
                 <ul class="timeline timeline-vertical lg:timeline-horizontal w-full flex justify-between">
