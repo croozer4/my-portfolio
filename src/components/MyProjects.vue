@@ -47,6 +47,9 @@ import ratePlaySwiperImg5 from '../assets/img/rateplay/rateplay5.jpg'
 import ratePlaySwiperImg6 from '../assets/img/rateplay/rateplay6.jpg'
 import ratePlaySwiperImg7 from '../assets/img/rateplay/rateplay7.jpg'
 
+//obrazki do swipera pongstm32
+import pongSTM32SwiperImg1 from '../assets/img/pongstm/pongstm1.jpg'
+import pongSTM32SwiperImg2 from '../assets/img/pongstm/pongstm2.jpg'
 
 defineProps({
     msg: String,
@@ -491,25 +494,10 @@ const showMore = ref(false);
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
                 :loop="true" class="w-full sm:h-[400px] h-[400px]">
                 <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg1" class="w-full h-full object-cover" />
+                    <img :src="pongSTM32SwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
                 <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg2" class="w-full h-full object-cover" />
-                </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg3" class="w-full h-full object-cover" />
-                </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg4" class="w-full h-full object-cover" />
-                </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg5" class="w-full h-full object-cover" />
-                </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg6" class="w-full h-full object-cover" />
-                </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
-                    <img :src="ratePlaySwiperImg7" class="w-full h-full object-cover" />
+                    <img :src="pongSTM32SwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
             <p class="pt-8"> The PONG STM32 project was created as part of coursework at the university of technology.

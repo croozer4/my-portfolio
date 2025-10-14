@@ -16,7 +16,7 @@ defineProps({
     <div class="w-full">
         <div class="max-w-screen-xl mx-auto">
             <!-- ciemny kolor -->
-            <h1 class="!text-5xl font-bold my-8 pl-8 text-gray-800 pt-8">Contact Me</h1>
+            <h1 class="!text-5xl font-bold mt-8 pl-8 text-gray-800 pt-8">Contact Me</h1>
 
             <div class="w-full flex p-8">
 
@@ -84,7 +84,7 @@ defineProps({
                                         <div class="text-xs uppercase font-semibold opacity-60">GITHUB</div>
                                     </div>
                                 </div>
-                                <button class="btn btn-ghost btn-c-filled">
+                                <button class="btn btn-ghost btn-c-filled" ahref="https://www.linkedin.com/in/konrad-kulesza/">
                                     View Profile
                                 </button>
                             </li>
