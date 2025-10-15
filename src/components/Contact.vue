@@ -2,13 +2,27 @@
 
 // import profileImg from '../assets/img/profile.jpg';
 import profileImg from '../assets/img/profile2.jpg';
+import { ref } from 'vue';
+
+const showToast = ref(false);
 
 defineProps({
     msg: String,
 })
 
 const openLink = (url: string) => {
-  window.open(url, '_blank');
+    window.open(url, '_blank');
+};
+
+const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast.value = true;
+        setTimeout(() => {
+            showToast.value = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Could not copy text: ', err);
+    });
 };
 
 </script>
@@ -31,7 +45,8 @@ const openLink = (url: string) => {
                         <ul class="list">
                             <li class="list-row px-0 flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div flex class="flex gap-4">
-                                    <div class="text-4xl font-thin opacity-30 tabular-nums w-11 hidden md:block">01</div>
+                                    <div class="text-4xl font-thin opacity-30 tabular-nums w-11 hidden md:block">01
+                                    </div>
                                     <div class="bg-white rounded-box w-10 h-10 flex items-center justify-center"><svg
                                             role="img" class="fill-current text-gray-800 h-8 w-8" viewBox="0 0 24 24">
                                             xmlns="http://www.w3.org/2000/svg">
@@ -44,14 +59,22 @@ const openLink = (url: string) => {
                                         <div class="text-xs uppercase font-semibold opacity-60">GMAIL</div>
                                     </div>
                                 </div>
-                                <button class="btn btn-ghost btn-c-filled" @click="openLink('mailto:konradkul12@gmail.com')">
-                                    Contact
-                                </button>
+                                <div class="flex gap-4 justify-center">
+                                    <button class="btn btn-ghost btn-c-outline flex-1 md:flex-initial" :class="{ copied: showToast }"
+                                        @click="copyToClipboard('konradkul12@gmail.com')"><span
+                                            v-if="showToast">Copied!</span><span v-else>Copy</span></button>
+                                    <button class="btn btn-ghost btn-c-filled flex-1 md:flex-initial"
+                                        @click="openLink('mailto:konradkul12@gmail.com')">
+                                        Contact
+                                    </button>
+                                </div>
+
                             </li>
 
                             <li class="list-row px-0 flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div flex class="flex gap-4">
-                                    <div class="text-4xl font-thin opacity-30 tabular-nums w-11 hidden md:block">02</div>
+                                    <div class="text-4xl font-thin opacity-30 tabular-nums w-11 hidden md:block">02
+                                    </div>
                                     <div class="bg-white rounded-box w-10 h-10 flex items-center justify-center">
                                         <svg role="img" class="fill-current text-gray-800 h-9 w-9" viewBox="0 0 640 640"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -66,14 +89,16 @@ const openLink = (url: string) => {
                                         <div class="text-xs uppercase font-semibold opacity-60">LINKEDIN</div>
                                     </div>
                                 </div>
-                                <button class="btn btn-ghost btn-c-filled" @click="openLink('https://www.linkedin.com/in/konrad-kulesza/')">
+                                <button class="btn btn-ghost btn-c-filled"
+                                    @click="openLink('https://www.linkedin.com/in/konrad-kulesza/')">
                                     View Profile
                                 </button>
                             </li>
 
                             <li class="list-row px-0 flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div flex class="flex gap-4">
-                                    <div class="text-4xl font-thin opacity-30 tabular-nums w-11 hidden md:block">03</div>
+                                    <div class="text-4xl font-thin opacity-30 tabular-nums w-11 hidden md:block">03
+                                    </div>
                                     <div class="bg-white rounded-box w-10 h-10 flex items-center justify-center"><svg
                                             role="img" class="fill-current text-gray-800 h-8 w-8" viewBox="0 0 24 24">
                                             xmlns="http://www.w3.org/2000/svg">
@@ -86,7 +111,8 @@ const openLink = (url: string) => {
                                         <div class="text-xs uppercase font-semibold opacity-60">GITHUB</div>
                                     </div>
                                 </div>
-                                <button class="btn btn-ghost btn-c-filled" @click="openLink('https://github.com/croozer4')">
+                                <button class="btn btn-ghost btn-c-filled"
+                                    @click="openLink('https://github.com/croozer4')">
                                     View Profile
                                 </button>
                             </li>
@@ -117,6 +143,26 @@ const openLink = (url: string) => {
 
 .btn-c-filled:hover {
     background-color: #df5239 !important;
+    border: none;
+    color: white;
+}
+
+.btn-c-outline {
+  border: 2px solid tomato !important;
+  color: tomato;
+  background-color: transparent;
+  outline: none;
+  box-shadow: none;
+  transition: all 0.3s ease;
+  padding-inline: 1rem; /* standardowy odstęp */
+}
+
+.btn-c-outline.copied {
+  padding-inline: 1.5rem; /* lekko rozszerza przycisk */
+}
+
+.btn-c-outline:hover {
+    background-color: tomato !important;
     border: none;
     color: white;
 }
