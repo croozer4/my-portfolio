@@ -145,7 +145,7 @@ onUnmounted(() => {
     z-index: 7;
     user-select: none;
     filter: blur(1px);
-    font-family: sans-serif;
+    font-family: "Noto Sans", sans-serif;
     -webkit-text-stroke: 3px #f0f8ea;
     /* shadow that looks like outline */
 }
@@ -158,7 +158,7 @@ onUnmounted(() => {
     color: transparent;
     z-index: 7;
     user-select: none;
-    font-family: sans-serif;
+    font-family: "Noto Sans", sans-serif;
     -webkit-text-stroke: 3px #f0f8ea;
 }
 
@@ -171,7 +171,7 @@ onUnmounted(() => {
     z-index: 7;
     user-select: none;
     filter: blur(1px);
-    font-family: sans-serif;
+    font-family: "Noto Sans", sans-serif;
     -webkit-text-stroke: 3px #f0f8ea;
 }
 
