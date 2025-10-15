@@ -93,10 +93,14 @@ onMounted(() => {
     const minSpeed = 0.1    // poniżej tej prędkości zatrzymujemy
     const friction = 0.98 // spowalnianie
 
+    const containerEl = document.querySelector('.gooey-bg') as HTMLElement
+    const containerRect = containerEl.getBoundingClientRect()
+
     blobs = blobEls.map(blob => {
         const rect = blob.getBoundingClientRect()
-        const x0 = rect.left + rect.width / 2
-        const y0 = rect.top + rect.height / 2
+        // pozycja środka bloba **w kontenerze**
+        const x0 = rect.left + rect.width / 2 - containerRect.left
+        const y0 = rect.top + rect.height / 2 - containerRect.top
         return {
             el: blob,
             x0,
@@ -110,6 +114,7 @@ onMounted(() => {
         }
     })
 
+
     // dla bloba o indeksie 0 ustawiamy początkową prędkość
     blobs[0].vx = -0.5
     blobs[0].vy = -0.5
@@ -117,8 +122,8 @@ onMounted(() => {
     blobs[2].vx = -0.5
     blobs[2].vy = 0.5
 
-    const containerEl = document.querySelector('.gooey-bg') as HTMLElement;
-    const containerRect = containerEl.getBoundingClientRect();
+    // const containerEl = document.querySelector('.gooey-bg') as HTMLElement;
+    // const containerRect = containerEl.getBoundingClientRect();
 
     const animate = () => {
         blobs.forEach(blob => {
@@ -126,10 +131,14 @@ onMounted(() => {
 
             // odbijanie od krawędzi okna
             const radius = blob.el.getBoundingClientRect().width / 2
-            if (blob.px - radius < containerRect.left && blob.vx < 0) blob.vx = -blob.vx;
-            if (blob.px + radius > containerRect.right && blob.vx > 0) blob.vx = -blob.vx;
-            if (blob.py - radius < containerRect.top && blob.vy < 0) blob.vy = -blob.vy;
-            if (blob.py + radius > containerRect.bottom && blob.vy > 0) blob.vy = -blob.vy;
+            const containerHeight = containerRect.height
+            const containerWidth = containerRect.width
+
+            if (blob.py - radius < 0 && blob.vy < 0) blob.vy = -blob.vy;
+            if (blob.py + radius > containerHeight && blob.vy > 0) blob.vy = -blob.vy;
+            if (blob.px - radius < 0 && blob.vx < 0) blob.vx = -blob.vx;
+            if (blob.px + radius > containerWidth && blob.vx > 0) blob.vx = -blob.vx;
+
 
 
             // aktualizacja pozycji wg prędkości
@@ -161,32 +170,43 @@ onMounted(() => {
 
     animate()
 
+    // const containerEl = document.querySelector('.gooey-bg') as HTMLElement
+
     blobEls.forEach((el, i) => {
-        let offsetX = 0, offsetY = 0
+        let offsetX = 0
+        let offsetY = 0
+
+        const getLocalMousePos = (e: MouseEvent) => {
+            const rect = containerEl.getBoundingClientRect()
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            }
+        }
+
 
         const onMouseDown = (e: MouseEvent) => {
             blobs[i].dragging = true
             blobs[i].lastPositions = []
-            const rect = el.getBoundingClientRect()
-            offsetX = e.clientX - rect.left - rect.width / 2
-            offsetY = e.clientY - rect.top - rect.height / 2
+
+            const blobRect = el.getBoundingClientRect()
+            const containerRect = containerEl.getBoundingClientRect()
+            offsetX = e.clientX - blobRect.left - blobRect.width / 2
+            offsetY = e.clientY - blobRect.top - blobRect.height / 2
         }
 
         const onMouseMove = (e: MouseEvent) => {
             if (!blobs[i].dragging) return
+            const pos = getLocalMousePos(e)
 
-            const now = performance.now()
-            blobs[i].px = e.clientX - offsetX
-            blobs[i].py = e.clientY - offsetY
+            blobs[i].px = pos.x - offsetX
+            blobs[i].py = pos.y - offsetY
+
             gsap.set(el, { x: blobs[i].px - blobs[i].x0, y: blobs[i].py - blobs[i].y0 })
 
-            // zapisujemy historię ostatnich pozycji (do obliczenia prędkości)
-            blobs[i].lastPositions.push({ x: e.clientX, y: e.clientY, t: now })
-
-            // trzymamy tylko 5 ostatnich pomiarów
-            if (blobs[i].lastPositions.length > 5) {
-                blobs[i].lastPositions.shift()
-            }
+            const now = performance.now()
+            blobs[i].lastPositions.push({ x: pos.x, y: pos.y, t: now })
+            if (blobs[i].lastPositions.length > 5) blobs[i].lastPositions.shift()
         }
 
         const onMouseUp = () => {
@@ -197,7 +217,7 @@ onMounted(() => {
             if (lp.length >= 2) {
                 const a = lp[lp.length - 2]
                 const b = lp[lp.length - 1]
-                const dt = (b.t - a.t) / 1000 // sekundy
+                const dt = (b.t - a.t) / 1000
                 if (dt > 0) {
                     blobs[i].vx = Math.max(Math.min((b.x - a.x) / dt * speedScale, maxSpeed), -maxSpeed)
                     blobs[i].vy = Math.max(Math.min((b.y - a.y) / dt * speedScale, maxSpeed), -maxSpeed)
@@ -209,7 +229,6 @@ onMounted(() => {
         window.addEventListener('mousemove', onMouseMove)
         window.addEventListener('mouseup', onMouseUp)
 
-        // sprzątanie
         onUnmounted(() => {
             el.removeEventListener('mousedown', onMouseDown)
             window.removeEventListener('mousemove', onMouseMove)
@@ -218,9 +237,6 @@ onMounted(() => {
     })
 })
 
-onUnmounted(() => {
-    cancelAnimationFrame(rafId)
-})
 
 </script>
 
@@ -244,7 +260,7 @@ onUnmounted(() => {
                     <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">{{
                         heroText.buttonContact }}</button>
                     <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">{{ heroText.buttonResume
-                        }}
+                    }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
