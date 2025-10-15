@@ -1,6 +1,14 @@
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { inject, Ref } from 'vue';
 import kkLogo from '../assets/img/kk-logo.svg';
+
+const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
+
+const toggleLang = () => {
+    if (currentLang) {
+        currentLang.value = currentLang.value === 'en' ? 'pl' : 'en';
+    } return;
+}
 
 defineProps({
     msg: String,
@@ -17,7 +25,7 @@ defineProps({
         <div class="flex-none">
             <label class="swap swap-flip">
                 <!-- hidden checkbox -->
-                <input type="checkbox" class="hidden" />
+                <input type="checkbox" class="hidden" @change="toggleLang" />
 
                 <!-- elementy swap -->
                 <div class="swap-on btn btn-square btn-ghost">PL</div>

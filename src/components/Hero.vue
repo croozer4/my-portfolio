@@ -1,24 +1,35 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
+import { Ref, inject, computed, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
 import { gsap } from 'gsap';
 
 defineProps({
     msg: String,
 })
 
+const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
+
+
+const heroText = computed(() => ({
+    greeting: currentLang?.value === 'pl' ? 'Cześć,' : "Hi there,",
+    name: currentLang?.value === 'pl' ? "Jestem Konrad" : "I'm Konrad",
+    role: currentLang?.value === 'pl' ? 'Web i Software Developer' : 'Web and Software Developer',
+    buttonContact: currentLang?.value === 'pl' ? 'Kontakt' : 'Contact Me',
+    buttonResume: currentLang?.value === 'pl' ? 'Moje CV' : 'My resume',
+}));
+
 const scrollToContact = () => {
-  const el = document.getElementById('contact-section');
-  el?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById('contact-section');
+    el?.scrollIntoView({ behavior: 'smooth' });
 };
 
 const downloadResume = () => {
-  const link = document.createElement('a');
-  link.href = '/cv/CV_Konrad_Kulesza_2025.pdf'; // ścieżka względem public/
-  link.setAttribute('download', 'CV_Konrad_Kulesza_2025.pdf');
-  link.setAttribute('target', '_blank'); // ważne dla Androida
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    const link = document.createElement('a');
+    link.href = '/cv/CV_Konrad_Kulesza_2025.pdf'; // ścieżka względem public/
+    link.setAttribute('download', 'CV_Konrad_Kulesza_2025.pdf');
+    link.setAttribute('target', '_blank'); // ważne dla Androida
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 
@@ -67,18 +78,19 @@ onUnmounted(() => {
             class="w-full h-full hero-content flex-col items-center lg:items-start justify-start lg:justify-center mt-20 lg:mt-0 select-none">
             <div class="text-center lg:text-left">
                 <p class="text-3xl py-6 font-bold">
-                    Hi there,
+                    {{ heroText.greeting }}
                 </p>
-                <p class="text-3xl"><span class="font-bold text-colorful"> > > > </span> I'm Konrad <span
+
+                <p class="text-3xl"><span class="font-bold text-colorful"> > > > </span> {{ heroText.name }} <span
                         class="font-bold text-colorful">
                         < < < </span>
                 </p>
                 <p class="text-4xl py-6 font-bold">
-                    Web and Software Developer<span class="font-bold text-colorful">.</span>
+                    {{ heroText.role }}<span class="font-bold text-colorful">.</span>
                 </p>
                 <div class="flex gap-4 items-center justify-center lg:justify-start">
-                    <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">Contact Me</button>
-                    <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">My resume
+                    <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">{{ heroText.buttonContact }}</button>
+                    <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">{{ heroText.buttonResume }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"

@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import { ref, provide } from 'vue'
 import HelloWorld from './components/HelloWorld.vue'
 import Navbar from './components/Navbar.vue';
 import Hero from './components/Hero.vue';
@@ -7,10 +8,14 @@ import MyExperience from './components/MyExperience.vue';
 import Contact from './components/Contact.vue';
 import Footer from './components/Footer.vue';
 
+const currentLang = ref<'en' | 'pl'>('en');
+
+provide('currentLang', currentLang);
+
 </script>
 
 <template>
-  <Navbar />
+  <Navbar :currentLang="currentLang"/>
   <Hero />
   <MyProjects />
   <MyExperience />
