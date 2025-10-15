@@ -8,7 +8,7 @@ defineProps({
 
 <template>
     <!-- Tekst My Projects -->
-    <div class="w-full bg-base-200">
+    <div class="w-full bg-base-100">
         <div class="max-w-screen-xl mx-auto">
             <!-- ciemny kolor -->
             <h1 class="!text-5xl font-bold my-8 pl-8 text-white pt-8">My Experience</h1>

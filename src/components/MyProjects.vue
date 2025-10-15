@@ -9,6 +9,8 @@ import snapStatsImg from '../assets/img/snapstats.jpg'
 import ratePlayImg from '../assets/img/rateplay.jpg'
 import pongSTM32Img from '../assets/img/pong-stm32.jpg'
 import asteroidsImg from '../assets/img/asteroids.jpg'
+import mazesolversImg from '../assets/img/mazesolvers.jpg'
+import comingSoonImg from '../assets/img/coming.jpg'
 
 // obrazki do swipera seenema
 import seenemaSwiperImg1 from '../assets/img/seenema/seenema1.jpg'
@@ -56,6 +58,10 @@ import pongSTM32SwiperImg2 from '../assets/img/pongstm/pongstm2.jpg'
 import asteroidsSwiperImg1 from '../assets/img/asteroids/asteroids1.jpg'
 import asteroidsSwiperImg2 from '../assets/img/asteroids/asteroids2.jpg'
 import asteroidsSwiperImg3 from '../assets/img/asteroids/asteroids3.jpg'
+
+//obrazki do swipera mazesolvers
+import mazesolversSwiperImg1 from '../assets/img/mazesolvers/mazesolvers1.jpg'
+import mazesolversSwiperImg2 from '../assets/img/mazesolvers/mazesolvers2.jpg'
 
 defineProps({
     msg: String,
@@ -183,16 +189,18 @@ const showMore = ref(false);
                 </div>
             </div>
 
-            <div class="card bg-base-100 w-full shadow-sm">
+            <!-- MazeSolver Card -->
+            <div class="card bg-base-100 w-full shadow-sm" onclick="mazesolvers_modal.showModal()">
                 <figure>
-                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
+                    <img :src="mazesolversImg" alt="MazeSolver" />
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        Wynalazki
-                        <div class="badge badge-secondary">Vue</div>
+                        MazeSolvers
+                        <div class="badge badge-secondary">Java</div>
+                        <div class="badge badge-secondary">Tauri</div>
                     </h2>
-                    <p>Hidden "Show more".</p>
+                    <p>Four MazeSolver apps made as part of my Master's thesis.</p>
                 </div>
             </div>
 
@@ -211,9 +219,10 @@ const showMore = ref(false);
                 </div>
             </div>
 
+            <!-- Coming Soon -->
             <div class="card bg-base-100 w-full shadow-sm">
                 <figure>
-                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
+                    <img :src="comingSoonImg" alt="Coming Soon" />
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
@@ -517,6 +526,35 @@ const showMore = ref(false);
                 movement. Control is handled via potentiometers. This project was a very engaging experience in embedded
                 programming, allowing me to deepen my understanding of low-level hardware interaction and
                 microcontroller software development. </p>
+        </div>
+    </dialog>
+
+    <!-- MazeSolver Modals -->
+    <dialog id="mazesolvers_modal" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+            </form>
+            <h3 class="text-2xl font-bold pb-4">Project - MazeSolver</h3>
+            <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
+                :loop="true" class="w-full sm:h-[400px] h-[400px]">
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="mazesolversSwiperImg1" class="w-full h-full object-cover" />
+                </SwiperSlide>
+                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                    <img :src="mazesolversSwiperImg2" class="w-full h-full object-cover" />
+                </SwiperSlide>
+            </Swiper>
+            <p class="pt-8"> The MazeSolver project was developed as part of my Master's thesis. It consists of four
+                separate applications built using different technologies — JavaFX, Java Swing, Electron, and Tauri —
+                each serving as a benchmark for performance and implementation differences across platforms. All four
+                applications were designed to be as similar as possible in both appearance and algorithm implementation
+                to ensure a fair and meaningful comparison. They generate mazes of customizable sizes using one of
+                several algorithms: Depth-First Search (DFS), Prim’s algorithm, and Recursive Division. The main goal of
+                the project was to evaluate and compare the performance of these technologies in terms of maze
+                generation time, memory consumption, application size, and startup time. This research provided valuable
+                insights into the inner workings of both native and web-based development frameworks, offering a
+                fascinating comparison between their efficiency, responsiveness, and development experience. </p>
         </div>
     </dialog>
 
