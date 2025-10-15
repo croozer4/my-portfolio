@@ -13,7 +13,7 @@ const scrollToContact = () => {
 
 const downloadResume = () => {
   const link = document.createElement('a');
-  link.href = '../assets/cv/CV_Konrad_Kulesza_2025.pdf';
+  link.href = '../../public/cv/CV_Konrad_Kulesza_2025.pdf';
   link.download = 'CV_Konrad_Kulesza_2025.pdf';
   link.click();
 };
