@@ -97,11 +97,11 @@ onMounted(() => {
 
 
     // dla bloba o indeksie 0 ustawiamy początkową prędkość
-    blobs[0].vx = -0.5
-    blobs[0].vy = -0.5
+    if (blobs[0]) blobs[0].vx = -0.5
+    if (blobs[0]) blobs[0].vy = -0.5
 
-    blobs[2].vx = -0.5
-    blobs[2].vy = 0.5
+    if (blobs[2]) blobs[2].vx = -0.5
+    if (blobs[2]) blobs[2].vy = 0.5
 
     const animate = () => {
         blobs.forEach(blob => {
@@ -236,7 +236,7 @@ onMounted(() => {
                     <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">{{
                         heroText.buttonContact }}</button>
                     <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">{{ heroText.buttonResume
-                        }}
+                    }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
