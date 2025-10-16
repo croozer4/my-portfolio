@@ -249,11 +249,6 @@ onMounted(() => {
         </div>
 
         <div class="w-full h-full flex-col items-start justify-end lg:justify-center relative z-1">
-            <!-- <div class="small-circle"></div>
-            <div class="big-circle"></div>
-            <div class="shape1 font-black rotate-[-10deg]">{ }</div>
-            <div class="shape2 font-black">.dev</div>
-            <div class="shape3 font-black rotate-[10deg]">[ ]</div> -->
 
             <svg v-if="svgWidth >= 1024" class="gooey-bg absolute inset-0" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -285,11 +280,9 @@ onMounted(() => {
                     </filter>
                 </defs>
                 <g filter="url(#goo)">
-                    <circle :cx="svgWidth / 2 + scrollX / 7" cy="600" r="170" fill="tomato" /> <!-- główny blob -->
+                    <circle :cx="svgWidth / 2 + scrollX / 7" cy="600" r="170" fill="tomato" />
                     <circle :cx="(svgWidth / 2) - 100 - scrollX / 7" :cy="500 - scrollX / 7" r="70" fill="tomato" />
-                    <!-- lewy mniejszy -->
                     <circle :cx="(svgWidth / 2) - 100 - scrollX / 7" :cy="700 + scrollX / 7" r="50" fill="tomato" />
-                    <!-- prawy mniejszy -->
                 </g>
             </svg>
         </div>
