@@ -28,8 +28,8 @@ defineProps({
                 <input type="checkbox" class="hidden" @change="toggleLang" />
 
                 <!-- elementy swap -->
-                <div class="swap-on btn btn-square btn-ghost">PL</div>
-                <div class="swap-off btn btn-square btn-ghost">EN</div>
+                <div class="swap-on btn btn-square btn-ghost text-xl">PL</div>
+                <div class="swap-off btn btn-square btn-ghost text-xl">EN</div>
             </label>
         </div>
     </div>

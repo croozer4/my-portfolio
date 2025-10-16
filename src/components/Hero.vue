@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, inject, computed, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
+import { Ref, ref, inject, computed, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
 import { gsap } from 'gsap';
 
 defineProps({
@@ -69,6 +69,14 @@ const downloadResume = () => {
 //         window.removeEventListener('mousemove', mouseHandler)
 //     }
 // })
+
+const svgWidth = ref(window.innerWidth);
+
+onMounted(() => {
+    const onResize = () => (svgWidth.value = window.innerWidth);
+    window.addEventListener("resize", onResize);
+    onUnmounted(() => window.removeEventListener("resize", onResize));
+});
 
 interface Blob {
     el: HTMLElement
@@ -260,7 +268,7 @@ onMounted(() => {
                     <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">{{
                         heroText.buttonContact }}</button>
                     <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">{{ heroText.buttonResume
-                    }}
+                        }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -291,9 +299,9 @@ onMounted(() => {
                     </filter>
                 </defs>
                 <g filter="url(#goo)">
-                    <circle class="blob z-1" cx="1100" cy="250" r="80" fill="tomato" />
-                    <circle class="blob z-1" cx="1200" cy="350" r="200" fill="tomato" />
-                    <circle class="blob z-1" cx="1100" cy="480" r="60" fill="tomato" />
+                    <circle class="blob" :cx="svgWidth - 400" cy="250" r="80" fill="tomato" />
+                    <circle class="blob" :cx="svgWidth - 300" cy="350" r="200" fill="tomato" />
+                    <circle class="blob" :cx="svgWidth - 400" cy="480" r="60" fill="tomato" />
                 </g>
             </svg>
         </div>
