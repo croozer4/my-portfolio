@@ -8,7 +8,6 @@ defineProps({
 
 const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
 
-
 const heroText = computed(() => ({
     greeting: currentLang?.value === 'pl' ? 'Cześć,' : "Hi there,",
     name: currentLang?.value === 'pl' ? "Jestem Konrad" : "I'm Konrad",
@@ -32,44 +31,17 @@ const downloadResume = () => {
     document.body.removeChild(link);
 };
 
+// Do parallax na bloby (mobile)
+const scrollX = ref(0);
 
-// let mouseHandler: (e: MouseEvent) => void
-
-// let smallCircleEl: HTMLElement | null = null
-// let bigCircleEl: HTMLElement | null = null
-// let shape1El: HTMLElement | null = null
-// let shape2El: HTMLElement | null = null
-// let shape3El: HTMLElement | null = null
-
-// onMounted(() => {
-//     smallCircleEl = document.querySelector('.small-circle')
-//     bigCircleEl = document.querySelector('.big-circle')
-//     shape1El = document.querySelector('.shape1')
-//     shape2El = document.querySelector('.shape2')
-//     shape3El = document.querySelector('.shape3')
+onMounted(() => {
+    window.addEventListener('scroll', () => {
+        scrollX.value = window.scrollY;
+    });
+});
 
 
-//     mouseHandler = (e: MouseEvent) => {
-//         const cx = e.clientX - window.innerWidth / 2
-//         const cy = e.clientY - window.innerHeight / 2
-//         gsap.to(smallCircleEl, { x: cx * 0.05, y: cy * 0.05, duration: 0.7, ease: 'power2.out' })
-//         gsap.to(bigCircleEl, { x: cx * 0.03, y: cy * 0.03, duration: 1.2, ease: 'power2.out' })
-//         gsap.to(shape1El, { x: cx * 0.05, y: cy * 0.04, duration: 0.3, ease: 'power2.out' })
-//         gsap.to(shape2El, { x: cx * 0.1, y: cy * 0.1, duration: 0.3, ease: 'power2.out' })
-//         gsap.to(shape3El, { x: cx * 0.05, y: cy * 0.08, duration: 0.3, ease: 'power2.out' })
-//     }
-//     if (window.matchMedia('(pointer:fine)').matches) {
-//         window.addEventListener('mousemove', mouseHandler)
-//     }
-
-// })
-
-// onUnmounted(() => {
-//     if (mouseHandler) {
-//         window.removeEventListener('mousemove', mouseHandler)
-//     }
-// })
-
+// Do responsywnego SVG (desktop)
 const svgWidth = ref(window.innerWidth);
 
 onMounted(() => {
@@ -77,6 +49,7 @@ onMounted(() => {
     window.addEventListener("resize", onResize);
     onUnmounted(() => window.removeEventListener("resize", onResize));
 });
+
 
 interface Blob {
     el: HTMLElement
@@ -96,10 +69,10 @@ let rafId: number
 onMounted(() => {
     const blobEls = Array.from(document.querySelectorAll(".blob")) as HTMLElement[]
 
-    const speedScale = 0.015  // mniejsze = wolniejsze
-    const maxSpeed = 15       // limit bezpieczeństwa
-    const minSpeed = 0.1    // poniżej tej prędkości zatrzymujemy
-    const friction = 0.98 // spowalnianie
+    const speedScale = 0.015
+    const maxSpeed = 15
+    const minSpeed = 0.1
+    const friction = 0.98
 
     const containerEl = document.querySelector('.gooey-bg') as HTMLElement
     const containerRect = containerEl.getBoundingClientRect()
@@ -130,9 +103,6 @@ onMounted(() => {
     blobs[2].vx = -0.5
     blobs[2].vy = 0.5
 
-    // const containerEl = document.querySelector('.gooey-bg') as HTMLElement;
-    // const containerRect = containerEl.getBoundingClientRect();
-
     const animate = () => {
         blobs.forEach(blob => {
             if (blob.dragging) return
@@ -146,8 +116,6 @@ onMounted(() => {
             if (blob.py + radius > containerHeight && blob.vy > 0) blob.vy = -blob.vy;
             if (blob.px - radius < 0 && blob.vx < 0) blob.vx = -blob.vx;
             if (blob.px + radius > containerWidth && blob.vx > 0) blob.vx = -blob.vx;
-
-
 
             // aktualizacja pozycji wg prędkości
             blob.px += blob.vx
@@ -163,8 +131,8 @@ onMounted(() => {
                 else if (blob.vy < 0) blob.vy = -minSpeed
             }
 
-            blob.vx *= friction
-            blob.vy *= friction
+            blob.vx *= friction - radius / 100000
+            blob.vy *= friction - radius / 100000
 
             // jeśli prędkość bardzo mała — zatrzymujemy
             if (Math.abs(blob.vx) < 0.01) blob.vx = 0
@@ -287,14 +255,14 @@ onMounted(() => {
             <div class="shape2 font-black">.dev</div>
             <div class="shape3 font-black rotate-[10deg]">[ ]</div> -->
 
-            <svg class="gooey-bg absolute inset-0" xmlns="http://www.w3.org/2000/svg">
+            <svg v-if="svgWidth >= 1024" class="gooey-bg absolute inset-0" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <filter id="goo">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
                         <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  
-                  0 1 0 0 0  
-                  0 0 1 0 0  
-                  0 0 0 25 -10" result="goo" />
+            0 1 0 0 0  
+            0 0 1 0 0  
+            0 0 0 40 -15" result="goo" />
                         <feComposite in="SourceGraphic" in2="goo" operator="atop" />
                     </filter>
                 </defs>
@@ -302,6 +270,26 @@ onMounted(() => {
                     <circle class="blob" :cx="svgWidth - 400" cy="250" r="80" fill="tomato" />
                     <circle class="blob" :cx="svgWidth - 300" cy="350" r="200" fill="tomato" />
                     <circle class="blob" :cx="svgWidth - 400" cy="480" r="60" fill="tomato" />
+                </g>
+            </svg>
+
+            <svg v-else class="gooey-bg absolute inset-0" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter id="goo">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
+                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  
+            0 1 0 0 0  
+            0 0 1 0 0  
+            0 0 0 40 -15" result="goo" />
+                        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+                    </filter>
+                </defs>
+                <g filter="url(#goo)">
+                    <circle :cx="svgWidth / 2 + scrollX / 7" cy="600" r="170" fill="tomato" /> <!-- główny blob -->
+                    <circle :cx="(svgWidth / 2) - 100 - scrollX / 7" :cy="500 - scrollX / 7" r="70" fill="tomato" />
+                    <!-- lewy mniejszy -->
+                    <circle :cx="(svgWidth / 2) - 100 - scrollX / 7" :cy="700 + scrollX / 7" r="50" fill="tomato" />
+                    <!-- prawy mniejszy -->
                 </g>
             </svg>
         </div>
