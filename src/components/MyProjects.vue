@@ -1,5 +1,6 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { Ref, ref, inject, computed, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
+
 
 // obrazki do cardów
 import seenemaImg from '../assets/img/seenema.jpg'
@@ -67,12 +68,32 @@ defineProps({
     msg: String,
 })
 
+const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
+
+const projectsText = computed(() => ({
+    title: currentLang?.value === 'pl' ? 'Projekty' : "My Projects",
+    showMore: currentLang?.value === 'pl' ? 'Pokaż więcej' : "Show more",
+    showLess: currentLang?.value === 'pl' ? 'Pokaż mniej' : "Show less",
+    seenemaDesc: currentLang?.value === 'pl' ? 'Aplikacja do zarządzania kinem i rezerwacji biletów online.' : 'Cinema management and online ticket booking made easy.',
+    quikbookDesc: currentLang?.value === 'pl' ? 'Aplikacja internetowa do rezerwacji usług i zarządzania rezerwacjami.' : 'Web app for booking services and managing reservations.',
+    rateplayDesc: currentLang?.value === 'pl' ? 'Aplikacja online dla graczy, umożliwiająca dzielenie się doświadczeniami.' : 'Online app for game enthusiasts to connect and share experiences.',
+    snapstatsDesc: currentLang?.value === 'pl' ? 'Platforma internetowa dla fotografów do dzielenia się, analizowania i krytykowania zdjęć.' : 'Online platform for photographers to share, analyze, and critique photos.',
+    pocketPalDesc: currentLang?.value === 'pl' ? 'Śledź swoje wydatki i zarządzaj finansami za pomocą wizualizacji danych.' : 'Track your spending and manage finances with visualized data.',
+    pongSTM32Desc: currentLang?.value === 'pl' ? 'Gra Pong odtworzona na mikrokontrolerze STM32.' : 'Fun Pong Game recreated on STM32 microcontroller.',
+    mazesolversDesc: currentLang?.value === 'pl' ? 'Cztery aplikacje MazeSolver stworzone w ramach mojej pracy magisterskiej.' : 'Four MazeSolver apps made as part of my Master\'s thesis.',
+    asteroidsDesc: currentLang?.value === 'pl' ? 'Gra Asteroids stworzona w C++ i Qt z płynnymi kontrolkami i fizyką.' : 'Asteroids game made with C++ and Qt with smooth controls and physics.',
+    nextProjectTitle: currentLang?.value === 'pl' ? 'Następny Projekt' : 'Next Project',
+    nextProjectDesc: currentLang?.value === 'pl' ? 'Więcej projektów wkrótce!' : 'More projects coming very soon!',
+
+}));
+
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css'; // podstawowe style
 import 'swiper/css/navigation'; // jeśli chcesz strzałki
 import 'swiper/css/pagination'; // jeśli chcesz kropki
 
 import { Navigation, Pagination } from 'swiper/modules';
+import { snap } from 'gsap';
 
 const showMore = ref(false);
 </script>
@@ -82,7 +103,7 @@ const showMore = ref(false);
     <!-- Tekst My Projects -->
     <div class="max-w-screen-xl mx-auto">
         <!-- ciemny kolor -->
-        <h1 class="text-xl lg:text-5xl font-bold my-8 pl-8 text-gray-800">My Projects</h1>
+        <h1 class="text-xl lg:text-5xl font-bold my-8 pl-8 text-gray-800">{{ projectsText.title }}</h1>
         <!-- Karty projektów -->
 
         <div
@@ -100,7 +121,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">PostgreSQL</div>
                     </h2>
                     <!-- apka do zarządzania kinem i rezerwacji biletów -->
-                    <p>Cinema management and online ticket booking made easy.</p>
+                    <p>{{ projectsText.seenemaDesc }}</p>
                 </div>
             </div>
 
@@ -117,7 +138,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">Firebase</div>
                     </h2>
                     <!-- usługi i rezerwacje -->
-                    <p>Web app for booking services and managing reservations.</p>
+                    <p>{{ projectsText.quikbookDesc }}</p>
                 </div>
             </div>
 
@@ -133,7 +154,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">Angular</div>
                         <div class="badge badge-secondary">Gemini API</div>
                     </h2>
-                    <p>Online app for game enthusiasts to connect and share experiences.</p>
+                    <p>{{ projectsText.rateplayDesc }}</p>
                 </div>
             </div>
         </div>
@@ -154,7 +175,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">React</div>
                         <div class="badge badge-secondary">Firebase</div>
                     </h2>
-                    <p>Online platform for photographers to share, analyze, and critique photos.</p>
+                    <p>{{ projectsText.snapstatsDesc }}</p>
                 </div>
             </div>
 
@@ -170,7 +191,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">Typescript</div>
                         <div class="badge badge-secondary">Firebase</div>
                     </h2>
-                    <p>Track your spending and manage finances with visualized data.</p>
+                    <p>{{ projectsText.pocketPalDesc }}</p>
                 </div>
             </div>
 
@@ -185,7 +206,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">C</div>
                         <div class="badge badge-secondary">Embedded</div>
                     </h2>
-                    <p>Fun Pong Game recreated on STM32 microcontroller.</p>
+                    <p>{{ projectsText.pongSTM32Desc }}</p>
                 </div>
             </div>
 
@@ -200,7 +221,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">Java</div>
                         <div class="badge badge-secondary">Tauri</div>
                     </h2>
-                    <p>Four MazeSolver apps made as part of my Master's thesis.</p>
+                    <p>{{ projectsText.mazesolversDesc }}</p>
                 </div>
             </div>
 
@@ -215,7 +236,7 @@ const showMore = ref(false);
                         <div class="badge badge-secondary">QT</div>
                         <div class="badge badge-secondary">C++</div>
                     </h2>
-                    <p>Asteroids game made with C++ and Qt with smooth controls and physics.</p>
+                    <p>{{ projectsText.asteroidsDesc }}</p>
                 </div>
             </div>
 
@@ -226,11 +247,11 @@ const showMore = ref(false);
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">
-                        Next Project
+                        {{ projectsText.nextProjectTitle }}
                         <div class="badge badge-secondary">?</div>
                         <div class="badge badge-secondary">?</div>
                     </h2>
-                    <p>More projects coming very soon!</p>
+                    <p>{{ projectsText.nextProjectDesc }}</p>
                 </div>
             </div>
         </div>
@@ -239,7 +260,7 @@ const showMore = ref(false);
     <!-- Przycisk Show More -->
     <div class="flex justify-center my-6">
         <button class="btn btn-primary btn-wide !bg-base-100" @click="showMore = !showMore">
-            {{ showMore ? "Show less" : "Show more" }}
+            {{ showMore ? projectsText.showLess : projectsText.showMore }}
         </button>
     </div>
 
