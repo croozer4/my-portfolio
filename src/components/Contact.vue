@@ -2,13 +2,25 @@
 
 // import profileImg from '../assets/img/profile.jpg';
 import profileImg from '../assets/img/profile2.jpg';
-import { ref } from 'vue';
+import { ref, computed, inject, Ref } from 'vue';
 
 const showToast = ref(false);
 
 defineProps({
     msg: String,
 })
+
+const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
+
+const contactText = computed(() => ({
+    title: currentLang?.value === 'pl' ? 'Kontakt' : "Contact Me",
+    socialsList: currentLang?.value === 'pl' ? 'Lista moich sociali' : 'List of my socials',
+    copy: currentLang?.value === 'pl' ? 'Kopiuj' : 'Copy',
+    copied: currentLang?.value === 'pl' ? 'Skopiowano!' : 'Copied!',
+    contact: currentLang?.value === 'pl' ? 'Kontakt' : 'Contact',
+    viewProfile: currentLang?.value === 'pl' ? 'Zobacz profil' : 'View Profile',
+
+}));
 
 const openLink = (url: string) => {
     window.open(url, '_blank');
@@ -32,7 +44,7 @@ const copyToClipboard = (text: string) => {
     <div id="contact-section" class="w-full mb-16">
         <div class="max-w-screen-xl mx-auto">
             <!-- ciemny kolor -->
-            <h1 class="!text-5xl font-bold mt-8 pl-8 text-gray-800 pt-8">Contact Me</h1>
+            <h1 class="!text-5xl font-bold mt-8 pl-8 text-gray-800 pt-8">{{ contactText.title }}</h1>
 
             <div class="w-full flex p-8">
 
@@ -41,7 +53,7 @@ const copyToClipboard = (text: string) => {
                         <img :src="profileImg" alt="Profile" class="object-cover" />
                     </figure>
                     <div class="card-body">
-                        <h2 class="card-title">List of my socials</h2>
+                        <h2 class="card-title">{{ contactText.socialsList }}</h2>
                         <ul class="list">
                             <li class="list-row px-0 flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div flex class="flex gap-4">
@@ -62,10 +74,10 @@ const copyToClipboard = (text: string) => {
                                 <div class="flex gap-4 justify-center">
                                     <button class="btn btn-ghost btn-c-outline flex-1 md:flex-initial" :class="{ copied: showToast }"
                                         @click="copyToClipboard('konradkul12@gmail.com')"><span
-                                            v-if="showToast">Copied!</span><span v-else>Copy</span></button>
+                                            v-if="showToast">{{ contactText.copied }}</span><span v-else>{{ contactText.copy }}</span></button>
                                     <button class="btn btn-ghost btn-c-filled flex-1 md:flex-initial"
                                         @click="openLink('mailto:konradkul12@gmail.com')">
-                                        Contact
+                                        {{ contactText.contact }}
                                     </button>
                                 </div>
 
@@ -91,7 +103,7 @@ const copyToClipboard = (text: string) => {
                                 </div>
                                 <button class="btn btn-ghost btn-c-filled"
                                     @click="openLink('https://www.linkedin.com/in/konrad-kulesza/')">
-                                    View Profile
+                                    {{ contactText.viewProfile }}
                                 </button>
                             </li>
 
@@ -113,7 +125,7 @@ const copyToClipboard = (text: string) => {
                                 </div>
                                 <button class="btn btn-ghost btn-c-filled"
                                     @click="openLink('https://github.com/croozer4')">
-                                    View Profile
+                                    {{ contactText.viewProfile }}
                                 </button>
                             </li>
 
