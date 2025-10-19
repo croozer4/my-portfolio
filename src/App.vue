@@ -15,12 +15,14 @@ provide('currentLang', currentLang);
 </script>
 
 <template>
-  <Navbar :currentLang="currentLang"/>
-  <Hero />
-  <MyProjects />
-  <MyExperience />
-  <Contact />
-  <Footer />
+  <div id="app" class="dark">
+    <Navbar :currentLang="currentLang" />
+    <Hero />
+    <MyProjects />
+    <MyExperience />
+    <Contact />
+    <Footer />
+  </div>
 </template>
 
 <style scoped>
