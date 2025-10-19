@@ -1,8 +1,22 @@
 <script setup lang="ts">
 
+import { inject, Ref, computed } from 'vue';
+
 defineProps({
     msg: String,
 })
+
+const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
+
+const experienceText = computed(() => ({
+    title: currentLang?.value === 'pl' ? 'Doświadczenie' : "My Experience",
+    description: currentLang?.value === 'pl' ? 'Absolwent IT z pasją do technologii webowych i nie tylko. Jestem w pełni zmotywowany, aby zdobyć cenne doświadczenie zawodowe. Moje mocne strony to zaangażowanie, szybkie uczenie się oraz dążenie do innowacyjnych i bezbłędnych rozwiązań. Posiadam już początkowe doświadczenie zawodowe, zdobyte częściowo poprzez międzynarodowe staże.' : 'A graduate in IT with a passion for web technologies and beyond. I am fully motivated to gain valuable professional experience. My strengths include dedication, quick learning, and a commitment to innovative and flawless solutions. I already have initial professional experience, gained partly through international internships.',
+    technik: currentLang?.value === 'pl' ? 'Technik Informatyk (TZN)' : 'IT Technician (TZN)',
+    inżynier: currentLang?.value === 'pl' ? 'Inżynier (PCz)' : 'Engineer (PCz)',
+    magister: currentLang?.value === 'pl' ? 'Magister (PCz)' : 'Master’s Degree (PCz)',
+    obecnie: currentLang?.value === 'pl' ? 'Obecnie' : 'Currently',
+
+}));
 
 </script>
 
@@ -11,11 +25,11 @@ defineProps({
     <div class="w-full bg-base-100">
         <div class="max-w-screen-xl mx-auto">
             <!-- ciemny kolor -->
-            <h1 class="!text-5xl font-bold my-8 pl-8 text-white pt-8">My Experience</h1>
+            <h1 class="!text-5xl font-bold my-8 pl-8 text-white pt-8">{{ experienceText.title }}</h1>
 
             <!-- cos tu napisz -->
 
-            <p class="pl-8 pr-8">A graduate in IT with a passion for web technologies and beyond. I am fully motivated to gain valuable professional experience. My strengths include dedication, quick learning, and a commitment to innovative and flawless solutions. I already have initial professional experience, gained partly through international internships.</p>
+            <p class="pl-8 pr-8">{{ experienceText.description }}</p>
 
             <div class="w-full flex p-8 pl-0">
 
@@ -72,7 +86,7 @@ defineProps({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">IT Technician (TZN)</div>
+                        <div class="timeline-end timeline-box text-center text-sm">{{ experienceText.technik }}</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -100,7 +114,7 @@ defineProps({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">Engineer (PCz)</div>
+                        <div class="timeline-end timeline-box text-center text-sm">{{ experienceText.inżynier }}</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -114,7 +128,7 @@ defineProps({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">Master’s Degree (PCz)</div>
+                        <div class="timeline-end timeline-box text-center text-sm">{{ experienceText.magister }}</div>
                     </li>
                 </ul>
             </div>
