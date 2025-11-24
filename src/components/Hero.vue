@@ -23,8 +23,8 @@ const scrollToContact = () => {
 
 const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/cv/CV_Konrad_Kulesza_2025.pdf'; // ścieżka względem public/
-    link.setAttribute('download', 'CV_Konrad_Kulesza_2025.pdf');
+    link.href = '/cv/Konrad_Kulesza_CV_2025.pdf'; // ścieżka względem public/
+    link.setAttribute('download', 'Konrad_Kulesza_CV_2025.pdf');
     link.setAttribute('target', '_blank'); // ważne dla Androida
     document.body.appendChild(link);
     link.click();
