@@ -44,22 +44,22 @@ const animationFrameId = ref<number | null>(null);
 // Konfiguracja siatki
 const gridConfig = {
   cellSize: 40,
-  gap: 2,
-  maxLift: 20,
-  influenceRadius: 120,
+  gap: 1,
+  maxLift: 35,
+  influenceRadius: 130,
   baseColor: '#1d232a',
   hoverColor: '#ff6347',
-  transitionSpeed: 0.15,
+  transitionSpeed: 0.20,
 };
 
 // Konfiguracja fali
 const waveConfig = {
-  maxRadius: 1000,
-  speed: 4, // pikseli na klatkę
-  maxLift: 35, // maksymalne podniesienie od fali
-  duration: 1200, // czas trwania fali w ms
-  rings: 3, // ile fal (pierścieni)
-  ringDelay: 100, // opóźnienie między falami w ms
+  maxRadius: 1200,
+  speed: 3, // pikseli na klatkę
+  maxLift: 60, // maksymalne podniesienie od fali
+  duration: 1400, // czas trwania fali w ms
+  rings: 1, // ile fal (pierścieni)
+  ringDelay: 10, // opóźnienie między falami w ms
 };
 
 // Kwadraty siatki
@@ -266,15 +266,15 @@ const drawGrid = () => {
     ctx.globalAlpha = opacity;
     
     // Zaokrąglenie rogów dla lepszego efektu
-    const borderRadius = 2;
+    // const borderRadius = 0;
     ctx.beginPath();
-    ctx.roundRect(cell.baseX, currentY, cell.size, cell.size, borderRadius);
+    ctx.roundRect(cell.baseX, currentY, cell.size, cell.size);
     ctx.fill();
     
     // Obramowanie
-    ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + colorIntensity * 0.1})`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    // ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + colorIntensity * 0.1})`;
+    // ctx.lineWidth = 1;
+    // ctx.stroke();
     
     ctx.restore();
   });
@@ -301,24 +301,24 @@ const drawCircleAndWaves = () => {
     const alpha = 0.3 * (1 - progress);
     
     // Grubość linii też zanika
-    const lineWidth = 2 * (1 - progress);
+    // const lineWidth = 2 * (1 - progress);
     
     // Rysuj okrąg fali
     ctx.beginPath();
     ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
     
     // Gradient dla fali
-    const gradient = ctx.createRadialGradient(
-      wave.x, wave.y, wave.radius * 0.8,
-      wave.x, wave.y, wave.radius
-    );
+    // const gradient = ctx.createRadialGradient(
+    //   wave.x, wave.y, wave.radius * 0.8,
+    //   wave.x, wave.y, wave.radius
+    // );
     
-    gradient.addColorStop(0, `rgba(255, 99, 71, ${alpha})`);
-    gradient.addColorStop(1, `rgba(255, 99, 71, 0)`);
+    // gradient.addColorStop(0, `rgba(255, 99, 71, ${alpha})`);
+    // gradient.addColorStop(1, `rgba(255, 99, 71, 0)`);
     
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
+    // ctx.strokeStyle = gradient;
+    // ctx.lineWidth = lineWidth;
+    // ctx.stroke();
     
     // Delikatne wypełnienie
     ctx.fillStyle = `rgba(255, 99, 71, ${alpha * 0.1})`;
