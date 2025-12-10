@@ -31,188 +31,297 @@ const downloadResume = () => {
     document.body.removeChild(link);
 };
 
-// Do parallax na bloby (mobile)
-const scrollX = ref(0);
+// gridzik
+// Nowe refy dla canvas
+const gridCanvasRef = ref<HTMLCanvasElement | null>(null);
+const circleCanvasRef = ref<HTMLCanvasElement | null>(null);
 
-onMounted(() => {
-    window.addEventListener('scroll', () => {
-        scrollX.value = window.scrollY;
-    });
-});
+// Stan dla animacji
+const mousePosition = ref({ x: 0, y: 0 });
+const isMouseOver = ref(false);
+const animationFrameId = ref<number | null>(null);
 
+// Konfiguracja siatki
+const gridConfig = {
+  cellSize: 40, // Rozmiar kwadratu w pikselach
+  gap: 1, // Odstęp między kwadratami
+  maxLift: 40, // Maksymalne podniesienie (w pikselach)
+  influenceRadius: 170, // Promień wpływu myszki
+  baseColor: '#1d232a', // Podstawowy kolor kwadratów
+  hoverColor: '#ff6347', // Kolor przy najechaniu
+  transitionSpeed: 0.2, // Szybkość animacji (0-1)
+};
 
-// Do responsywnego SVG (desktop)
-const svgWidth = ref(window.innerWidth);
+// Kwadraty siatki
+const gridCells = ref<Array<{
+  x: number,
+  y: number,
+  baseX: number,
+  baseY: number,
+  lift: number,
+  targetLift: number,
+  color: string,
+  size: number
+}>>([]);
 
-onMounted(() => {
-    const onResize = () => (svgWidth.value = window.innerWidth);
-    window.addEventListener("resize", onResize);
-    onUnmounted(() => window.removeEventListener("resize", onResize));
-});
-
-
-interface Blob {
-    el: HTMLElement
-    x0: number
-    y0: number
-    px: number
-    py: number
-    vx: number
-    vy: number
-    dragging: boolean
-    lastPositions: { x: number; y: number; t: number }[]
-}
-
-let blobs: Blob[] = []
-let rafId: number
-
-onMounted(() => {
-    const blobEls = Array.from(document.querySelectorAll(".blob")) as HTMLElement[]
-
-    const speedScale = 0.015
-    const maxSpeed = 15
-    const minSpeed = 0.1
-    const friction = 0.98
-
-    const containerEl = document.querySelector('.gooey-bg') as HTMLElement
-    const containerRect = containerEl.getBoundingClientRect()
-
-    blobs = blobEls.map(blob => {
-        const rect = blob.getBoundingClientRect()
-        // pozycja środka bloba **w kontenerze**
-        const x0 = rect.left + rect.width / 2 - containerRect.left
-        const y0 = rect.top + rect.height / 2 - containerRect.top
-        return {
-            el: blob,
-            x0,
-            y0,
-            px: x0,
-            py: y0,
-            vx: 0,
-            vy: 0,
-            dragging: false,
-            lastPositions: []
-        }
-    })
-
-
-    // dla bloba o indeksie 0 ustawiamy początkową prędkość
-    if (blobs[0]) blobs[0].vx = -0.5
-    if (blobs[0]) blobs[0].vy = -0.5
-
-    if (blobs[2]) blobs[2].vx = -0.5
-    if (blobs[2]) blobs[2].vy = 0.5
-
-    const animate = () => {
-        blobs.forEach(blob => {
-            if (blob.dragging) return
-
-            // odbijanie od krawędzi okna
-            const radius = blob.el.getBoundingClientRect().width / 2
-            const containerHeight = containerRect.height
-            const containerWidth = containerRect.width
-
-            if (blob.py - radius < 0 && blob.vy < 0) blob.vy = -blob.vy;
-            if (blob.py + radius > containerHeight && blob.vy > 0) blob.vy = -blob.vy;
-            if (blob.px - radius < 0 && blob.vx < 0) blob.vx = -blob.vx;
-            if (blob.px + radius > containerWidth && blob.vx > 0) blob.vx = -blob.vx;
-
-            // aktualizacja pozycji wg prędkości
-            blob.px += blob.vx
-            blob.py += blob.vy
-
-            // delikatne spowalnianie
-            if (Math.abs(blob.vx) < minSpeed) {
-                if (blob.vx > 0) blob.vx = minSpeed
-                else if (blob.vx < 0) blob.vx = -minSpeed
-            }
-            if (Math.abs(blob.vy) < minSpeed) {
-                if (blob.vy > 0) blob.vy = minSpeed
-                else if (blob.vy < 0) blob.vy = -minSpeed
-            }
-
-            blob.vx *= friction - radius / 100000
-            blob.vy *= friction - radius / 100000
-
-            // jeśli prędkość bardzo mała — zatrzymujemy
-            if (Math.abs(blob.vx) < 0.01) blob.vx = 0
-            if (Math.abs(blob.vy) < 0.01) blob.vy = 0
-
-            gsap.set(blob.el, { x: blob.px - blob.x0, y: blob.py - blob.y0 })
-        })
-
-        rafId = requestAnimationFrame(animate)
+// Inicjalizacja canvas
+const initCanvas = () => {
+  if (!gridCanvasRef.value || !circleCanvasRef.value) return;
+  
+  const gridCanvas = gridCanvasRef.value;
+  const circleCanvas = circleCanvasRef.value;
+  const parent = gridCanvas.parentElement;
+  
+  if (!parent) return;
+  
+  // Ustaw rozmiar canvas na rozmiar rodzica
+  const width = parent.clientWidth;
+  const height = parent.clientHeight;
+  
+  gridCanvas.width = width;
+  gridCanvas.height = height;
+  circleCanvas.width = width;
+  circleCanvas.height = height;
+  
+  // Oblicz ilość kolumn i wierszy
+  const cols = Math.ceil(width / (gridConfig.cellSize + gridConfig.gap));
+  const rows = Math.ceil(height / (gridConfig.cellSize + gridConfig.gap));
+  
+  // Generuj siatkę kwadratów
+  const cells = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * (gridConfig.cellSize + gridConfig.gap);
+      const y = row * (gridConfig.cellSize + gridConfig.gap);
+      
+      cells.push({
+        x,
+        y,
+        baseX: x,
+        baseY: y,
+        lift: 0,
+        targetLift: 0,
+        color: gridConfig.baseColor,
+        size: gridConfig.cellSize
+      });
     }
+  }
+  
+  gridCells.value = cells;
+};
 
-    animate()
+// Rysowanie siatki
+const drawGrid = () => {
+  if (!gridCanvasRef.value) return;
+  
+  const ctx = gridCanvasRef.value.getContext('2d');
+  if (!ctx) return;
+  
+  // Wyczyść canvas
+  ctx.clearRect(0, 0, gridCanvasRef.value.width, gridCanvasRef.value.height);
+  
+  // Rysuj wszystkie kwadraty
+  gridCells.value.forEach(cell => {
+    // Płynna animacja podnoszenia
+    cell.lift += (cell.targetLift - cell.lift) * gridConfig.transitionSpeed;
+    
+    // Oblicz aktualną pozycję z podniesieniem
+    const currentY = cell.baseY - cell.lift;
+    
+    // Oblicz przezroczystość na podstawie podniesienia
+    const opacity = 0.7 + (cell.lift / gridConfig.maxLift) * 0.3;
+    
+    // Rysuj kwadrat z cieniem dla efektu 3D
+    ctx.save();
+    
+    // Cienie dla efektu głębi
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    // ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 5;
+    
+    // Wypełnienie kwadratu
+    ctx.fillStyle = cell.color;
+    ctx.globalAlpha = opacity;
+    ctx.fillRect(cell.baseX, currentY, cell.size, cell.size);
+    
+    // Obramowanie
+    // ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    // ctx.lineWidth = 1;
+    // ctx.strokeRect(cell.baseX, currentY, cell.size, cell.size);
+    
+    ctx.restore();
+  });
+};
 
-    // const containerEl = document.querySelector('.gooey-bg') as HTMLElement
+// Rysowanie okręgu myszki (opcjonalne)
+const drawCircle = () => {
+  if (!circleCanvasRef.value || !isMouseOver.value) return;
+  
+  const ctx = circleCanvasRef.value.getContext('2d');
+  if (!ctx) return;
+  
+  // Wyczyść canvas okręgu
+  ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
+  
+  // Rysuj subtelny okrąg wokół myszki
+  ctx.beginPath();
+  const gradient = ctx.createRadialGradient(
+    mousePosition.value.x, mousePosition.value.y, 0,
+    mousePosition.value.x, mousePosition.value.y, gridConfig.influenceRadius
+  );
+  
+  gradient.addColorStop(0, 'rgba(255, 99, 71, 0.1)');
+  gradient.addColorStop(0.7, 'rgba(255, 99, 71, 0.05)');
+  gradient.addColorStop(1, 'rgba(255, 99, 71, 0)');
+  
+  ctx.fillStyle = gradient;
+  ctx.arc(
+    mousePosition.value.x, 
+    mousePosition.value.y, 
+    gridConfig.influenceRadius, 
+    0, 
+    Math.PI * 2
+  );
+  ctx.fill();
+};
 
-    blobEls.forEach((el, i) => {
-        let offsetX = 0
-        let offsetY = 0
+// Aktualizacja pozycji myszki
+const updateMousePosition = (e: MouseEvent) => {
+  if (!gridCanvasRef.value) return;
+  
+  const rect = gridCanvasRef.value.getBoundingClientRect();
+  mousePosition.value = {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+  
+  isMouseOver.value = true;
+  
+  // Aktualizuj kwadraty na podstawie pozycji myszki
+  updateGridCells();
+};
 
-        const getLocalMousePos = (e: MouseEvent) => {
-            const rect = containerEl.getBoundingClientRect()
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            }
-        }
+// Aktualizacja stanu kwadratów
+const updateGridCells = () => {
+  const mouseX = mousePosition.value.x;
+  const mouseY = mousePosition.value.y;
+  
+  gridCells.value.forEach(cell => {
+    // Środek kwadratu
+    const cellCenterX = cell.baseX + cell.size / 2;
+    const cellCenterY = cell.baseY + cell.size / 2;
+    
+    // Oblicz odległość od myszki
+    const distance = Math.sqrt(
+      Math.pow(cellCenterX - mouseX, 2) + 
+      Math.pow(cellCenterY - mouseY, 2)
+    );
+    
+    // Jeśli kwadrat jest w promieniu wpływu
+    if (distance < gridConfig.influenceRadius) {
+      // Oblicz siłę podniesienia (1 na środku, 0 na krawędzi promienia)
+      const force = 1 - (distance / gridConfig.influenceRadius);
+      
+      // Podnieś kwadrat (kwadratowa funkcja dla lepszego efektu)
+      cell.targetLift = Math.pow(force, 2) * gridConfig.maxLift;
+      
+      // Zmień kolor na podstawie odległości
+      const colorIntensity = Math.pow(force, 1.5);
+      cell.color = interpolateColor(
+        gridConfig.baseColor, 
+        gridConfig.hoverColor, 
+        colorIntensity
+      );
+    } else {
+      // Resetuj do stanu spoczynku
+      cell.targetLift = 0;
+      cell.color = gridConfig.baseColor;
+    }
+  });
+};
 
+// Pomocnicza funkcja do interpolacji kolorów
+const interpolateColor = (color1: string, color2: string, factor: number): string => {
+  // Konwertuj hex na RGB
+  const hexToRgb = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+  };
+  
+  const rgb1 = hexToRgb(color1);
+  const rgb2 = hexToRgb(color2);
+  
+  const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * factor);
+  const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * factor);
+  const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * factor);
+  
+  return `rgb(${r}, ${g}, ${b})`;
+};
 
-        const onMouseDown = (e: MouseEvent) => {
-            blobs[i].dragging = true
-            blobs[i].lastPositions = []
+// Pętla animacji
+const animate = () => {
+  drawGrid();
+  drawCircle();
+  animationFrameId.value = requestAnimationFrame(animate);
+};
 
-            const blobRect = el.getBoundingClientRect()
-            const containerRect = containerEl.getBoundingClientRect()
-            offsetX = e.clientX - blobRect.left - blobRect.width / 2
-            offsetY = e.clientY - blobRect.top - blobRect.height / 2
-        }
+// Obsługa opuszczenia obszaru
+const handleMouseLeave = () => {
+  isMouseOver.value = false;
+  
+  // Resetuj wszystkie kwadraty
+  gridCells.value.forEach(cell => {
+    cell.targetLift = 0;
+    cell.color = gridConfig.baseColor;
+  });
+  
+  // Wyczyść canvas okręgu
+  if (circleCanvasRef.value) {
+    const ctx = circleCanvasRef.value.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
+    }
+  }
+};
 
-        const onMouseMove = (e: MouseEvent) => {
-            if (!blobs[i].dragging) return
-            const pos = getLocalMousePos(e)
+// Obsługa zmiany rozmiaru okna
+const handleResize = () => {
+  initCanvas();
+};
 
-            blobs[i].px = pos.x - offsetX
-            blobs[i].py = pos.y - offsetY
+// Lifecycle hooks
+onMounted(() => {
+  initCanvas();
+  
+  // Rozpocznij animację
+  if (gridCanvasRef.value) {
+    animate();
+    
+    // Dodaj event listeners
+    gridCanvasRef.value.addEventListener('mousemove', updateMousePosition);
+    gridCanvasRef.value.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('resize', handleResize);
+  }
+});
 
-            gsap.set(el, { x: blobs[i].px - blobs[i].x0, y: blobs[i].py - blobs[i].y0 })
-
-            const now = performance.now()
-            blobs[i].lastPositions.push({ x: pos.x, y: pos.y, t: now })
-            if (blobs[i].lastPositions.length > 5) blobs[i].lastPositions.shift()
-        }
-
-        const onMouseUp = () => {
-            if (!blobs[i].dragging) return
-            blobs[i].dragging = false
-
-            const lp = blobs[i].lastPositions
-            if (lp.length >= 2) {
-                const a = lp[lp.length - 2]
-                const b = lp[lp.length - 1]
-                const dt = (b.t - a.t) / 1000
-                if (dt > 0) {
-                    blobs[i].vx = Math.max(Math.min((b.x - a.x) / dt * speedScale, maxSpeed), -maxSpeed)
-                    blobs[i].vy = Math.max(Math.min((b.y - a.y) / dt * speedScale, maxSpeed), -maxSpeed)
-                }
-            }
-        }
-
-        el.addEventListener('mousedown', onMouseDown)
-        window.addEventListener('mousemove', onMouseMove)
-        window.addEventListener('mouseup', onMouseUp)
-
-        onUnmounted(() => {
-            el.removeEventListener('mousedown', onMouseDown)
-            window.removeEventListener('mousemove', onMouseMove)
-            window.removeEventListener('mouseup', onMouseUp)
-        })
-    })
-})
-
+onUnmounted(() => {
+  // Zatrzymaj animację
+  if (animationFrameId.value) {
+    cancelAnimationFrame(animationFrameId.value);
+  }
+  
+  // Usuń event listeners
+  if (gridCanvasRef.value) {
+    gridCanvasRef.value.removeEventListener('mousemove', updateMousePosition);
+    gridCanvasRef.value.removeEventListener('mouseleave', handleMouseLeave);
+  }
+  
+  window.removeEventListener('resize', handleResize);
+});
 
 </script>
 
@@ -248,49 +357,33 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="w-full h-full flex-col items-start justify-end lg:justify-center relative z-1">
+        <!-- <canvas ref="canvasRef" class="hero-canvas absolute inset-0 w-full h-full"></canvas> -->
+        <canvas ref="gridCanvasRef" id="gridCanvas" class="w-full h-full absolute inset-0 pointer-events-auto"></canvas>
+<canvas ref="circleCanvasRef" id="circleCanvas" class="w-full h-full absolute inset-0 pointer-events-none"></canvas>
 
-            <svg v-if="svgWidth >= 1024" class="gooey-bg absolute inset-0" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <filter id="goo">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
-                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  
-            0 1 0 0 0  
-            0 0 1 0 0  
-            0 0 0 40 -15" result="goo" />
-                        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-                    </filter>
-                </defs>
-                <g filter="url(#goo)">
-                    <circle class="blob" :cx="svgWidth - 400" cy="250" r="80" fill="tomato" />
-                    <circle class="blob" :cx="svgWidth - 300" cy="350" r="200" fill="tomato" />
-                    <circle class="blob" :cx="svgWidth - 400" cy="480" r="60" fill="tomato" />
-                </g>
-            </svg>
 
-            <svg v-else class="gooey-bg absolute inset-0" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <filter id="goo">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
-                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  
-            0 1 0 0 0  
-            0 0 1 0 0  
-            0 0 0 40 -15" result="goo" />
-                        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-                    </filter>
-                </defs>
-                <g filter="url(#goo)">
-                    <circle :cx="svgWidth / 2 + scrollX / 7" cy="600" r="170" fill="tomato" />
-                    <circle :cx="(svgWidth / 2) - 100 - scrollX / 7" :cy="500 - scrollX / 7" r="70" fill="tomato" />
-                    <circle :cx="(svgWidth / 2) - 100 - scrollX / 7" :cy="700 + scrollX / 7" r="50" fill="tomato" />
-                </g>
-            </svg>
-        </div>
 
     </div>
 </template>
 
 <style scoped>
+
+#gridCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+#circleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
 .read-the-docs {
     color: #888;
 }
