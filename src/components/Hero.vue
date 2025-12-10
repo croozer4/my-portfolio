@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref, inject, computed, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
-import { gsap } from 'gsap';
+import { Ref, ref, inject, computed, onMounted, onUnmounted } from 'vue';
 
 defineProps({
     msg: String,
@@ -36,6 +35,8 @@ const downloadResume = () => {
 const gridCanvasRef = ref<HTMLCanvasElement | null>(null);
 const circleCanvasRef = ref<HTMLCanvasElement | null>(null);
 
+let resizeTimeout: ReturnType<typeof setTimeout>;
+
 // Stan dla animacji
 const mousePosition = ref({ x: 0, y: 0 });
 const isMouseOver = ref(false);
@@ -43,462 +44,460 @@ const animationFrameId = ref<number | null>(null);
 
 // Konfiguracja siatki
 const gridConfig = {
-  cellSize: 40,
-  gap: 1,
-  maxLift: 35,
-  influenceRadius: 130,
-  baseColor: '#1d232a',
-  hoverColor: '#ff6347',
-  transitionSpeed: 0.20,
+    cellSize: 40,
+    gap: 1,
+    maxLift: 35,
+    influenceRadius: 130,
+    baseColor: '#1d232a',
+    hoverColor: '#ff6347',
+    transitionSpeed: 0.20,
 };
 
 // Konfiguracja fali
 const waveConfig = {
-  maxRadius: 1200,
-  speed: 3, // pikseli na klatkę
-  maxLift: 60, // maksymalne podniesienie od fali
-  duration: 1400, // czas trwania fali w ms
-  rings: 1, // ile fal (pierścieni)
-  ringDelay: 10, // opóźnienie między falami w ms
+    maxRadius: 1200,
+    speed: 9, // pikseli na klatkę
+    maxLift: 90, // maksymalne podniesienie od fali
+    duration: 1000, // czas trwania fali w ms
+    rings: 1, // ile fal (pierścieni)
+    ringDelay: 10, // opóźnienie między falami w ms
 };
 
 // Kwadraty siatki
 const gridCells = ref<Array<{
-  x: number,
-  y: number,
-  baseX: number,
-  baseY: number,
-  lift: number,
-  targetLift: number,
-  color: string,
-  size: number,
-  waveLift: number, // dodatkowe podniesienie od fali
-  waveTimestamp: number // czas ostatniego wpływu fali
+    x: number,
+    y: number,
+    baseX: number,
+    baseY: number,
+    centerX: number,
+    centerY: number,
+    lift: number,
+    targetLift: number,
+    color: string,
+    size: number,
+    waveLift: number, // dodatkowe podniesienie od fali
+    waveTimestamp: number // czas ostatniego wpływu fali
 }>>([]);
 
 // Fale (impulsy)
 const waves = ref<Array<{
-  x: number,
-  y: number,
-  startTime: number,
-  radius: number,
-  active: boolean,
-  ringIndex: number
+    x: number,
+    y: number,
+    startTime: number,
+    radius: number,
+    active: boolean,
+    ringIndex: number
 }>>([]);
 
 // Inicjalizacja canvas
 const initCanvas = () => {
-  if (!gridCanvasRef.value || !circleCanvasRef.value) return;
-  
-  const gridCanvas = gridCanvasRef.value;
-  const circleCanvas = circleCanvasRef.value;
-  const parent = gridCanvas.parentElement;
-  
-  if (!parent) return;
-  
-  const width = parent.clientWidth;
-  const height = parent.clientHeight;
-  
-  gridCanvas.width = width;
-  gridCanvas.height = height;
-  circleCanvas.width = width;
-  circleCanvas.height = height;
-  
-  const cols = Math.ceil(width / (gridConfig.cellSize + gridConfig.gap));
-  const rows = Math.ceil(height / (gridConfig.cellSize + gridConfig.gap));
-  
-  const cells = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const x = col * (gridConfig.cellSize + gridConfig.gap);
-      const y = row * (gridConfig.cellSize + gridConfig.gap);
-      
-      cells.push({
-        x,
-        y,
-        baseX: x,
-        baseY: y,
-        lift: 0,
-        targetLift: 0,
-        color: gridConfig.baseColor,
-        size: gridConfig.cellSize,
-        waveLift: 0,
-        waveTimestamp: 0
-      });
+    if (!gridCanvasRef.value || !circleCanvasRef.value) return;
+
+    const gridCanvas = gridCanvasRef.value;
+    const circleCanvas = circleCanvasRef.value;
+    const parent = gridCanvas.parentElement;
+
+    if (!parent) return;
+
+    const width = parent.clientWidth;
+    const height = parent.clientHeight;
+
+    gridCanvas.width = width;
+    gridCanvas.height = height;
+    circleCanvas.width = width;
+    circleCanvas.height = height;
+
+    const cols = Math.ceil(width / (gridConfig.cellSize + gridConfig.gap));
+    const rows = Math.ceil(height / (gridConfig.cellSize + gridConfig.gap));
+
+    const cells = [];
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const x = col * (gridConfig.cellSize + gridConfig.gap);
+            const y = row * (gridConfig.cellSize + gridConfig.gap);
+
+            cells.push({
+                x,
+                y,
+                baseX: x,
+                baseY: y,
+                centerX: x + gridConfig.cellSize / 2, // <-- DODAJ TO
+                centerY: y + gridConfig.cellSize / 2, // <-- DODAJ TO
+                lift: 0,
+                targetLift: 0,
+                color: gridConfig.baseColor,
+                size: gridConfig.cellSize,
+                waveLift: 0,
+                waveTimestamp: 0
+            });
+        }
     }
-  }
-  
-  gridCells.value = cells;
+
+    gridCells.value = cells;
 };
 
 // Tworzenie fali (kliknięcie)
 const createWave = (x: number, y: number) => {
-  const now = Date.now();
-  
-  // Tworzymy kilka fal z opóźnieniem (efekt pierścieni)
-  for (let i = 0; i < waveConfig.rings; i++) {
-    setTimeout(() => {
-      waves.value.push({
-        x,
-        y,
-        startTime: Date.now(),
-        radius: 0,
-        active: true,
-        ringIndex: i
-      });
-    }, i * waveConfig.ringDelay);
-  }
+    const now = Date.now();
+
+    // Tworzymy kilka fal z opóźnieniem (efekt pierścieni)
+    for (let i = 0; i < waveConfig.rings; i++) {
+        setTimeout(() => {
+            waves.value.push({
+                x,
+                y,
+                startTime: Date.now(),
+                radius: 0,
+                active: true,
+                ringIndex: i
+            });
+        }, i * waveConfig.ringDelay);
+    }
 };
 
 // Aktualizacja fal
 const updateWaves = () => {
-  const now = Date.now();
-  
-  // Aktualizuj istniejące fale
-  waves.value.forEach(wave => {
-    const elapsed = now - wave.startTime;
-    
-    // Jeśli fala skończyła
-    if (elapsed > waveConfig.duration) {
-      wave.active = false;
-      return;
-    }
-    
-    // Oblicz promień fali (zaczyna od 0, rośnie liniowo)
-    wave.radius = (elapsed / waveConfig.duration) * waveConfig.maxRadius;
-    
-    // Dla każdego kwadratu sprawdź czy jest w zasięgu fali
-    gridCells.value.forEach(cell => {
-      const cellCenterX = cell.baseX + cell.size / 2;
-      const cellCenterY = cell.baseY + cell.size / 2;
-      
-      const distance = Math.sqrt(
-        Math.pow(cellCenterX - wave.x, 2) + 
-        Math.pow(cellCenterY - wave.y, 2)
-      );
-      
-      // Jeśli kwadrat jest w zasięgu fali
-      if (distance < wave.radius) {
-        // Oblicz siłę fali (najsilniejsza na krawędzi, słabnie do środka i na zewnątrz)
-        // Używamy funkcji sinus dla ładnego efektu
-        const waveProgress = distance / waveConfig.maxRadius;
-        const waveStrength = Math.sin(waveProgress * Math.PI);
-        
-        // Tłumienie w czasie
-        const timeStrength = 1 - (elapsed / waveConfig.duration);
-        
-        // Tłumienie dla kolejnych pierścieni
-        const ringStrength = 1 - (wave.ringIndex / waveConfig.rings) * 0.3;
-        
-        const totalStrength = waveStrength * timeStrength * ringStrength;
-        
-        // Jeśli ta fala ma większy wpływ niż poprzednia
-        const waveEffect = Math.pow(totalStrength, 2) * waveConfig.maxLift;
-        
-        if (waveEffect > cell.waveLift) {
-          cell.waveLift = waveEffect;
-          cell.waveTimestamp = now;
+    const now = Date.now();
+
+    // Aktualizuj istniejące fale
+    waves.value.forEach(wave => {
+        const elapsed = now - wave.startTime;
+
+        // Jeśli fala skończyła
+        if (elapsed > waveConfig.duration) {
+            wave.active = false;
+            return;
         }
-      }
+
+        // Oblicz promień fali (zaczyna od 0, rośnie liniowo)
+        wave.radius = (elapsed / waveConfig.duration) * waveConfig.maxRadius;
+        const radiusSq = wave.radius * wave.radius;
+
+        // Dla każdego kwadratu sprawdź czy jest w zasięgu fali
+        gridCells.value.forEach(cell => {
+            const dx = cell.centerX - wave.x;
+            const dy = cell.centerY - wave.y;
+            const distanceSq = dx * dx + dy * dy;
+
+            if (distanceSq < radiusSq) {
+                const distance = Math.sqrt(distanceSq); // sqrt tylko raz jeśli w zasięgu
+                const waveProgress = distance / waveConfig.maxRadius;
+                const waveStrength = Math.sin(waveProgress * Math.PI);
+
+                const timeStrength = 1 - (elapsed / waveConfig.duration);
+                const ringStrength = 1 - (wave.ringIndex / waveConfig.rings) * 0.3;
+                const totalStrength = waveStrength * timeStrength * ringStrength;
+
+                const waveEffect = totalStrength * totalStrength * waveConfig.maxLift;
+
+                if (waveEffect > cell.waveLift) {
+                    cell.waveLift = waveEffect;
+                    cell.waveTimestamp = now;
+                }
+            }
+        });
     });
-  });
-  
-  // Usuń nieaktywne fale
-  waves.value = waves.value.filter(wave => wave.active);
-  
-  // Stopniowo zmniejszaj waveLift dla kwadratów
-  const decayTime = 300; // ms
-  gridCells.value.forEach(cell => {
-    if (cell.waveLift > 0 && now - cell.waveTimestamp > decayTime) {
-      cell.waveLift *= 0.9; // płynne zanikanie
-      if (cell.waveLift < 0.5) cell.waveLift = 0;
-    }
-  });
+
+    // Usuń nieaktywne fale
+    waves.value = waves.value.filter(wave => wave.active);
+
+    // Stopniowo zmniejszaj waveLift dla kwadratów
+    const decayTime = 300; // ms
+    gridCells.value.forEach(cell => {
+        if (cell.waveLift > 0 && now - cell.waveTimestamp > decayTime) {
+            cell.waveLift *= 0.9; // płynne zanikanie
+            if (cell.waveLift < 0.5) cell.waveLift = 0;
+        }
+    });
 };
 
 // Rysowanie siatki
 const drawGrid = () => {
-  if (!gridCanvasRef.value) return;
-  
-  const ctx = gridCanvasRef.value.getContext('2d');
-  if (!ctx) return;
-  
-  // Wyczyść canvas
-  ctx.clearRect(0, 0, gridCanvasRef.value.width, gridCanvasRef.value.height);
-  
-  // Aktualizuj fale
-  updateWaves();
-  
-  // Rysuj wszystkie kwadraty
-  gridCells.value.forEach(cell => {
-    // Płynna animacja podnoszenia od myszki
-    cell.lift += (cell.targetLift - cell.lift) * gridConfig.transitionSpeed;
-    
-    // Całkowite podniesienie = myszka + fala
-    const totalLift = cell.lift + cell.waveLift;
-    
-    // Oblicz aktualną pozycję z podniesieniem
-    const currentY = cell.baseY - totalLift;
-    
-    // Oblicz przezroczystość na podstawie podniesienia
-    const opacity = 0.7 + (totalLift / (gridConfig.maxLift + waveConfig.maxLift)) * 0.3;
-    
-    // Intensywność koloru na podstawie podniesienia (0-1)
-    const colorIntensity = Math.min(1, totalLift / 30);
-    
-    // Rysuj kwadrat
-    ctx.save();
-    
-    // Cienie
-    ctx.shadowColor = `rgba(0, 0, 0, 0.3)`;
-    ctx.shadowOffsetY = 5;
+    if (!gridCanvasRef.value) return;
 
-    // JEDNOLITY KOLOR - UŻYJ FUNKCJI interpolateColor
-    // colorIntensity = 0 → baseColor, colorIntensity = 1 → hoverColor
-    const fillColor = interpolateColor(
-      gridConfig.baseColor, 
-      gridConfig.hoverColor, 
-      colorIntensity
-    );
+    const ctx = gridCanvasRef.value.getContext('2d');
+    if (!ctx) return;
+
+    // Wyczyść canvas
+    ctx.clearRect(0, 0, gridCanvasRef.value.width, gridCanvasRef.value.height);
+
+    // Aktualizuj fale
+    updateWaves();
+
+    // Rysuj wszystkie kwadraty
+    gridCells.value.forEach(cell => {
+        // Płynna animacja podnoszenia od myszki
+        cell.lift += (cell.targetLift - cell.lift) * gridConfig.transitionSpeed;
+
+        // Całkowite podniesienie = myszka + fala
     
-    ctx.fillStyle = fillColor;
-    
-    ctx.globalAlpha = opacity;
-    
-    // Zaokrąglenie rogów dla lepszego efektu
-    // const borderRadius = 0;
-    ctx.beginPath();
-    ctx.roundRect(cell.baseX, currentY, cell.size, cell.size);
-    ctx.fill();
-    
-    // Obramowanie
-    // ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + colorIntensity * 0.1})`;
-    // ctx.lineWidth = 1;
-    // ctx.stroke();
-    
-    ctx.restore();
-  });
+        const totalLift = cell.lift + cell.waveLift;
+
+        // Oblicz aktualną pozycję z podniesieniem
+        const currentY = cell.baseY - totalLift;
+
+        // Oblicz przezroczystość na podstawie podniesienia
+        const opacity = 0.7 + (totalLift / (gridConfig.maxLift + waveConfig.maxLift)) * 0.3;
+
+        // Intensywność koloru na podstawie podniesienia (0-1)
+        const colorIntensity = Math.min(1, totalLift / 30);
+
+        // wylosuj wartosc od 0 do 10 jesli bedzie 5 to dodaj lift +5
+        
+        
+
+        // Rysuj kwadrat
+        // ctx.save();
+
+        // Cienie
+        // ctx.shadowColor = `rgba(0, 0, 0, 0.3)`;
+        // ctx.shadowOffsetY = 5;
+
+        // JEDNOLITY KOLOR - UŻYJ FUNKCJI interpolateColor
+        // colorIntensity = 0 → baseColor, colorIntensity = 1 → hoverColor
+        const fillColor = interpolateColor(
+            gridConfig.baseColor,
+            gridConfig.hoverColor,
+            colorIntensity
+        );
+
+        ctx.fillStyle = fillColor;
+
+        ctx.globalAlpha = opacity;
+
+        // Zaokrąglenie rogów dla lepszego efektu
+        // const borderRadius = 90;
+        ctx.beginPath();
+        ctx.roundRect(cell.baseX, currentY, cell.size, cell.size);
+        ctx.fill();
+
+        // Obramowanie
+        // ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + colorIntensity * 0.1})`;
+        // ctx.lineWidth = 1;
+        // ctx.stroke();
+
+        // ctx.restore();
+    });
 };
 
 // Rysowanie okręgu myszki i fal
 const drawCircleAndWaves = () => {
-  if (!circleCanvasRef.value) return;
-  
-  const ctx = circleCanvasRef.value.getContext('2d');
-  if (!ctx) return;
-  
-  // Wyczyść canvas
-  ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
-  
-  // Rysuj fale
-  waves.value.forEach(wave => {
-    const elapsed = Date.now() - wave.startTime;
-    if (!wave.active) return;
-    
-    const progress = elapsed / waveConfig.duration;
-    
-    // Przezroczystość zanika z czasem
-    const alpha = 0.3 * (1 - progress);
-    
-    // Grubość linii też zanika
-    // const lineWidth = 2 * (1 - progress);
-    
-    // Rysuj okrąg fali
-    ctx.beginPath();
-    ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
-    
-    // Gradient dla fali
-    // const gradient = ctx.createRadialGradient(
-    //   wave.x, wave.y, wave.radius * 0.8,
-    //   wave.x, wave.y, wave.radius
-    // );
-    
-    // gradient.addColorStop(0, `rgba(255, 99, 71, ${alpha})`);
-    // gradient.addColorStop(1, `rgba(255, 99, 71, 0)`);
-    
-    // ctx.strokeStyle = gradient;
-    // ctx.lineWidth = lineWidth;
-    // ctx.stroke();
-    
-    // Delikatne wypełnienie
-    ctx.fillStyle = `rgba(255, 99, 71, ${alpha * 0.1})`;
-    ctx.fill();
-  });
-  
-  // Rysuj okrąg myszki (tylko gdy jest nad canvasem)
-  if (isMouseOver.value) {
-    ctx.beginPath();
-    const gradient = ctx.createRadialGradient(
-      mousePosition.value.x, mousePosition.value.y, 0,
-      mousePosition.value.x, mousePosition.value.y, gridConfig.influenceRadius
-    );
-    
-    gradient.addColorStop(0, 'rgba(255, 99, 71, 0.1)');
-    gradient.addColorStop(0.7, 'rgba(255, 99, 71, 0.05)');
-    gradient.addColorStop(1, 'rgba(255, 99, 71, 0)');
-    
-    ctx.fillStyle = gradient;
-    ctx.arc(
-      mousePosition.value.x, 
-      mousePosition.value.y, 
-      gridConfig.influenceRadius, 
-      0, 
-      Math.PI * 2
-    );
-    ctx.fill();
-  }
+    if (!circleCanvasRef.value) return;
+
+    const ctx = circleCanvasRef.value.getContext('2d');
+    if (!ctx) return;
+
+    // Wyczyść canvas
+    ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
+
+    // Rysuj fale
+    waves.value.forEach(wave => {
+        const elapsed = Date.now() - wave.startTime;
+        if (!wave.active) return;
+
+        const progress = elapsed / waveConfig.duration;
+
+        // Przezroczystość zanika z czasem
+        const alpha = 0.3 * (1 - progress);
+
+        // Grubość linii też zanika
+        // const lineWidth = 2 * (1 - progress);
+
+        // Rysuj okrąg fali
+        ctx.beginPath();
+        ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
+
+        // Gradient dla fali
+        // const gradient = ctx.createRadialGradient(
+        //   wave.x, wave.y, wave.radius * 0.8,
+        //   wave.x, wave.y, wave.radius
+        // );
+
+        // gradient.addColorStop(0, `rgba(255, 99, 71, ${alpha})`);
+        // gradient.addColorStop(1, `rgba(255, 99, 71, 0)`);
+
+        // ctx.strokeStyle = gradient;
+        // ctx.lineWidth = lineWidth;
+        // ctx.stroke();
+
+        // Delikatne wypełnienie
+        ctx.fillStyle = `rgba(255, 99, 71, ${alpha * 0.1})`;
+        ctx.fill();
+    });
+
+    // Rysuj okrąg myszki (tylko gdy jest nad canvasem)
+    if (isMouseOver.value) {
+        ctx.beginPath();
+        const gradient = ctx.createRadialGradient(
+            mousePosition.value.x, mousePosition.value.y, 0,
+            mousePosition.value.x, mousePosition.value.y, gridConfig.influenceRadius
+        );
+
+        gradient.addColorStop(0, 'rgba(255, 99, 71, 0.1)');
+        gradient.addColorStop(0.7, 'rgba(255, 99, 71, 0.05)');
+        gradient.addColorStop(1, 'rgba(255, 99, 71, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.arc(
+            mousePosition.value.x,
+            mousePosition.value.y,
+            gridConfig.influenceRadius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+    }
 };
 
 // Aktualizacja pozycji myszki
 const updateMousePosition = (e: MouseEvent) => {
-  if (!gridCanvasRef.value) return;
-  
-  const rect = gridCanvasRef.value.getBoundingClientRect();
-  mousePosition.value = {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
-  };
-  
-  isMouseOver.value = true;
-  
-  // Aktualizuj kwadraty na podstawie pozycji myszki
-  updateGridCells();
+    if (!gridCanvasRef.value) return;
+
+    const rect = gridCanvasRef.value.getBoundingClientRect();
+    mousePosition.value = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+
+    isMouseOver.value = true;
+
+    // Aktualizuj kwadraty na podstawie pozycji myszki
+    updateGridCells();
 };
 
 // Obsługa kliknięcia myszki - TWORZENIE FALI!
 const handleMouseClick = (e: MouseEvent) => {
-  if (!gridCanvasRef.value) return;
-  
-  const rect = gridCanvasRef.value.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  // Utwórz falę w miejscu kliknięcia
-  createWave(x, y);
-  
-  // Mały efekt wizualny - krótki błysk
-  if (circleCanvasRef.value) {
-    const ctx = circleCanvasRef.value.getContext('2d');
-    if (ctx) {
-      // Rysuj małe białe kółko w miejscu kliknięcia
-      ctx.beginPath();
-      ctx.arc(x, y, 10, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.fill();
-      
-      // Zniknie w następnej klatce
+    if (!gridCanvasRef.value) return;
+
+    const rect = gridCanvasRef.value.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Utwórz falę w miejscu kliknięcia
+    createWave(x, y);
+
+    // Mały efekt wizualny - krótki błysk
+    if (circleCanvasRef.value) {
+        const ctx = circleCanvasRef.value.getContext('2d');
+        if (ctx) {
+            // Rysuj małe białe kółko w miejscu kliknięcia
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
+
+            // Zniknie w następnej klatce
+        }
     }
-  }
 };
 
 // Aktualizacja stanu kwadratów (tylko dla myszki)
 const updateGridCells = () => {
-  const mouseX = mousePosition.value.x;
-  const mouseY = mousePosition.value.y;
-  
-  gridCells.value.forEach(cell => {
-    const cellCenterX = cell.baseX + cell.size / 2;
-    const cellCenterY = cell.baseY + cell.size / 2;
-    
-    const distance = Math.sqrt(
-      Math.pow(cellCenterX - mouseX, 2) + 
-      Math.pow(cellCenterY - mouseY, 2)
-    );
-    
-    if (distance < gridConfig.influenceRadius) {
-      const force = 1 - (distance / gridConfig.influenceRadius);
-      cell.targetLift = Math.pow(force, 2) * gridConfig.maxLift;
-      const colorIntensity = Math.pow(force, 1.5);
-      cell.color = interpolateColor(
-        gridConfig.baseColor, 
-        gridConfig.hoverColor, 
-        colorIntensity
-      );
-    } else {
-      cell.targetLift = 0;
-      cell.color = gridConfig.baseColor;
-    }
-  });
+    const mouseX = mousePosition.value.x;
+    const mouseY = mousePosition.value.y;
+
+    gridCells.value.forEach(cell => {
+        // const cellCenterX = cell.baseX + cell.size / 2;
+        // const cellCenterY = cell.baseY + cell.size / 2;
+
+        const distance = Math.sqrt(
+            Math.pow(cell.centerX - mouseX, 2) +
+            Math.pow(cell.centerY - mouseY, 2)
+        );
+
+        if (distance < gridConfig.influenceRadius) {
+            const force = 1 - (distance / gridConfig.influenceRadius);
+            cell.targetLift = Math.pow(force, 2) * gridConfig.maxLift;
+            const colorIntensity = Math.pow(force, 1.5);
+            cell.color = interpolateColor(
+                gridConfig.baseColor,
+                gridConfig.hoverColor,
+                colorIntensity
+            );
+        } else {
+            cell.targetLift = 0;
+            cell.color = gridConfig.baseColor;
+        }
+    });
 };
 
 // Pomocnicza funkcja do interpolacji kolorów
 const interpolateColor = (color1: string, color2: string, factor: number): string => {
-  const hexToRgb = (hex: string) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 0, b: 0 };
-  };
-  
-  const rgb1 = hexToRgb(color1);
-  const rgb2 = hexToRgb(color2);
-  
-  const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * factor);
-  const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * factor);
-  const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * factor);
-  
-  return `rgb(${r}, ${g}, ${b})`;
+    // Pre-calc once at init
+    const r1 = 29, g1 = 35, b1 = 42; // #1d232a
+    const r2 = 255, g2 = 99, b2 = 71; // tomato
+
+    const r = (r1 + (r2 - r1) * factor) | 0; // |0 is faster than Math.round
+    const g = (g1 + (g2 - g1) * factor) | 0;
+    const b = (b1 + (b2 - b1) * factor) | 0;
+
+    // Template literal is faster than string concat
+    return `rgb(${r},${g},${b})`;
 };
 
 // Pętla animacji
 const animate = () => {
-  drawGrid();
-  drawCircleAndWaves();
-  animationFrameId.value = requestAnimationFrame(animate);
+    drawGrid();
+    drawCircleAndWaves();
+    animationFrameId.value = requestAnimationFrame(animate);
 };
 
 // Obsługa opuszczenia obszaru
 const handleMouseLeave = () => {
-  isMouseOver.value = false;
-  
-  gridCells.value.forEach(cell => {
-    cell.targetLift = 0;
-    cell.color = gridConfig.baseColor;
-  });
-  
-  if (circleCanvasRef.value) {
-    const ctx = circleCanvasRef.value.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
+    isMouseOver.value = false;
+
+    gridCells.value.forEach(cell => {
+        cell.targetLift = 0;
+        cell.color = gridConfig.baseColor;
+    });
+
+    if (circleCanvasRef.value) {
+        const ctx = circleCanvasRef.value.getContext('2d');
+        if (ctx) {
+            ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
+        }
     }
-  }
 };
 
 // Obsługa zmiany rozmiaru okna
 const handleResize = () => {
-  initCanvas();
+    // initCanvas();
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        initCanvas();
+    }, 150);
 };
 
 // Lifecycle hooks
 onMounted(() => {
-  initCanvas();
-  
-  // Rozpocznij animację
-  if (gridCanvasRef.value) {
-    animate();
-    
-    // Dodaj event listeners
-    gridCanvasRef.value.addEventListener('mousemove', updateMousePosition);
-    gridCanvasRef.value.addEventListener('click', handleMouseClick);
-    gridCanvasRef.value.addEventListener('mouseleave', handleMouseLeave);
-    window.addEventListener('resize', handleResize);
-  }
+    initCanvas();
+
+    // Rozpocznij animację
+    if (gridCanvasRef.value) {
+        animate();
+
+        // Dodaj event listeners
+        gridCanvasRef.value.addEventListener('mousemove', updateMousePosition);
+        gridCanvasRef.value.addEventListener('click', handleMouseClick);
+        gridCanvasRef.value.addEventListener('mouseleave', handleMouseLeave);
+        window.addEventListener('resize', handleResize);
+    }
 });
 
 onUnmounted(() => {
-  if (animationFrameId.value) {
-    cancelAnimationFrame(animationFrameId.value);
-  }
-  
-  if (gridCanvasRef.value) {
-    gridCanvasRef.value.removeEventListener('mousemove', updateMousePosition);
-    gridCanvasRef.value.removeEventListener('click', handleMouseClick);
-    gridCanvasRef.value.removeEventListener('mouseleave', handleMouseLeave);
-  }
-  
-  window.removeEventListener('resize', handleResize);
+    if (animationFrameId.value) {
+        cancelAnimationFrame(animationFrameId.value);
+    }
+
+    if (gridCanvasRef.value) {
+        gridCanvasRef.value.removeEventListener('mousemove', updateMousePosition);
+        gridCanvasRef.value.removeEventListener('click', handleMouseClick);
+        gridCanvasRef.value.removeEventListener('mouseleave', handleMouseLeave);
+    }
+
+    window.removeEventListener('resize', handleResize);
+
+    if (resizeTimeout) clearTimeout(resizeTimeout);
 });
 
 </script>
@@ -537,7 +536,8 @@ onUnmounted(() => {
 
         <!-- <canvas ref="canvasRef" class="hero-canvas absolute inset-0 w-full h-full"></canvas> -->
         <canvas ref="gridCanvasRef" id="gridCanvas" class="w-full h-full absolute inset-0 pointer-events-auto"></canvas>
-<canvas ref="circleCanvasRef" id="circleCanvas" class="w-full h-full absolute inset-0 pointer-events-none"></canvas>
+        <canvas ref="circleCanvasRef" id="circleCanvas"
+            class="w-full h-full absolute inset-0 pointer-events-none"></canvas>
 
 
 
@@ -545,23 +545,23 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-
 #gridCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  pointer-events: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: auto;
 }
 
 #circleCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  pointer-events: none;
-  mix-blend-mode: overlay;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: overlay;
 }
+
 .read-the-docs {
     color: #888;
 }
