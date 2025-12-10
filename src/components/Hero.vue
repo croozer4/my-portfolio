@@ -43,13 +43,23 @@ const animationFrameId = ref<number | null>(null);
 
 // Konfiguracja siatki
 const gridConfig = {
-  cellSize: 40, // Rozmiar kwadratu w pikselach
-  gap: 1, // Odstęp między kwadratami
-  maxLift: 40, // Maksymalne podniesienie (w pikselach)
-  influenceRadius: 170, // Promień wpływu myszki
-  baseColor: '#1d232a', // Podstawowy kolor kwadratów
-  hoverColor: '#ff6347', // Kolor przy najechaniu
-  transitionSpeed: 0.2, // Szybkość animacji (0-1)
+  cellSize: 40,
+  gap: 2,
+  maxLift: 20,
+  influenceRadius: 120,
+  baseColor: '#1d232a',
+  hoverColor: '#ff6347',
+  transitionSpeed: 0.15,
+};
+
+// Konfiguracja fali
+const waveConfig = {
+  maxRadius: 1000,
+  speed: 4, // pikseli na klatkę
+  maxLift: 35, // maksymalne podniesienie od fali
+  duration: 1200, // czas trwania fali w ms
+  rings: 3, // ile fal (pierścieni)
+  ringDelay: 100, // opóźnienie między falami w ms
 };
 
 // Kwadraty siatki
@@ -61,7 +71,19 @@ const gridCells = ref<Array<{
   lift: number,
   targetLift: number,
   color: string,
-  size: number
+  size: number,
+  waveLift: number, // dodatkowe podniesienie od fali
+  waveTimestamp: number // czas ostatniego wpływu fali
+}>>([]);
+
+// Fale (impulsy)
+const waves = ref<Array<{
+  x: number,
+  y: number,
+  startTime: number,
+  radius: number,
+  active: boolean,
+  ringIndex: number
 }>>([]);
 
 // Inicjalizacja canvas
@@ -74,7 +96,6 @@ const initCanvas = () => {
   
   if (!parent) return;
   
-  // Ustaw rozmiar canvas na rozmiar rodzica
   const width = parent.clientWidth;
   const height = parent.clientHeight;
   
@@ -83,11 +104,9 @@ const initCanvas = () => {
   circleCanvas.width = width;
   circleCanvas.height = height;
   
-  // Oblicz ilość kolumn i wierszy
   const cols = Math.ceil(width / (gridConfig.cellSize + gridConfig.gap));
   const rows = Math.ceil(height / (gridConfig.cellSize + gridConfig.gap));
   
-  // Generuj siatkę kwadratów
   const cells = [];
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
@@ -102,12 +121,99 @@ const initCanvas = () => {
         lift: 0,
         targetLift: 0,
         color: gridConfig.baseColor,
-        size: gridConfig.cellSize
+        size: gridConfig.cellSize,
+        waveLift: 0,
+        waveTimestamp: 0
       });
     }
   }
   
   gridCells.value = cells;
+};
+
+// Tworzenie fali (kliknięcie)
+const createWave = (x: number, y: number) => {
+  const now = Date.now();
+  
+  // Tworzymy kilka fal z opóźnieniem (efekt pierścieni)
+  for (let i = 0; i < waveConfig.rings; i++) {
+    setTimeout(() => {
+      waves.value.push({
+        x,
+        y,
+        startTime: Date.now(),
+        radius: 0,
+        active: true,
+        ringIndex: i
+      });
+    }, i * waveConfig.ringDelay);
+  }
+};
+
+// Aktualizacja fal
+const updateWaves = () => {
+  const now = Date.now();
+  
+  // Aktualizuj istniejące fale
+  waves.value.forEach(wave => {
+    const elapsed = now - wave.startTime;
+    
+    // Jeśli fala skończyła
+    if (elapsed > waveConfig.duration) {
+      wave.active = false;
+      return;
+    }
+    
+    // Oblicz promień fali (zaczyna od 0, rośnie liniowo)
+    wave.radius = (elapsed / waveConfig.duration) * waveConfig.maxRadius;
+    
+    // Dla każdego kwadratu sprawdź czy jest w zasięgu fali
+    gridCells.value.forEach(cell => {
+      const cellCenterX = cell.baseX + cell.size / 2;
+      const cellCenterY = cell.baseY + cell.size / 2;
+      
+      const distance = Math.sqrt(
+        Math.pow(cellCenterX - wave.x, 2) + 
+        Math.pow(cellCenterY - wave.y, 2)
+      );
+      
+      // Jeśli kwadrat jest w zasięgu fali
+      if (distance < wave.radius) {
+        // Oblicz siłę fali (najsilniejsza na krawędzi, słabnie do środka i na zewnątrz)
+        // Używamy funkcji sinus dla ładnego efektu
+        const waveProgress = distance / waveConfig.maxRadius;
+        const waveStrength = Math.sin(waveProgress * Math.PI);
+        
+        // Tłumienie w czasie
+        const timeStrength = 1 - (elapsed / waveConfig.duration);
+        
+        // Tłumienie dla kolejnych pierścieni
+        const ringStrength = 1 - (wave.ringIndex / waveConfig.rings) * 0.3;
+        
+        const totalStrength = waveStrength * timeStrength * ringStrength;
+        
+        // Jeśli ta fala ma większy wpływ niż poprzednia
+        const waveEffect = Math.pow(totalStrength, 2) * waveConfig.maxLift;
+        
+        if (waveEffect > cell.waveLift) {
+          cell.waveLift = waveEffect;
+          cell.waveTimestamp = now;
+        }
+      }
+    });
+  });
+  
+  // Usuń nieaktywne fale
+  waves.value = waves.value.filter(wave => wave.active);
+  
+  // Stopniowo zmniejszaj waveLift dla kwadratów
+  const decayTime = 300; // ms
+  gridCells.value.forEach(cell => {
+    if (cell.waveLift > 0 && now - cell.waveTimestamp > decayTime) {
+      cell.waveLift *= 0.9; // płynne zanikanie
+      if (cell.waveLift < 0.5) cell.waveLift = 0;
+    }
+  });
 };
 
 // Rysowanie siatki
@@ -120,69 +226,127 @@ const drawGrid = () => {
   // Wyczyść canvas
   ctx.clearRect(0, 0, gridCanvasRef.value.width, gridCanvasRef.value.height);
   
+  // Aktualizuj fale
+  updateWaves();
+  
   // Rysuj wszystkie kwadraty
   gridCells.value.forEach(cell => {
-    // Płynna animacja podnoszenia
+    // Płynna animacja podnoszenia od myszki
     cell.lift += (cell.targetLift - cell.lift) * gridConfig.transitionSpeed;
     
+    // Całkowite podniesienie = myszka + fala
+    const totalLift = cell.lift + cell.waveLift;
+    
     // Oblicz aktualną pozycję z podniesieniem
-    const currentY = cell.baseY - cell.lift;
+    const currentY = cell.baseY - totalLift;
     
     // Oblicz przezroczystość na podstawie podniesienia
-    const opacity = 0.7 + (cell.lift / gridConfig.maxLift) * 0.3;
+    const opacity = 0.7 + (totalLift / (gridConfig.maxLift + waveConfig.maxLift)) * 0.3;
     
-    // Rysuj kwadrat z cieniem dla efektu 3D
+    // Intensywność koloru na podstawie podniesienia (0-1)
+    const colorIntensity = Math.min(1, totalLift / 30);
+    
+    // Rysuj kwadrat
     ctx.save();
     
-    // Cienie dla efektu głębi
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-    // ctx.shadowBlur = 10;
+    // Cienie
+    ctx.shadowColor = `rgba(0, 0, 0, 0.3)`;
     ctx.shadowOffsetY = 5;
+
+    // JEDNOLITY KOLOR - UŻYJ FUNKCJI interpolateColor
+    // colorIntensity = 0 → baseColor, colorIntensity = 1 → hoverColor
+    const fillColor = interpolateColor(
+      gridConfig.baseColor, 
+      gridConfig.hoverColor, 
+      colorIntensity
+    );
     
-    // Wypełnienie kwadratu
-    ctx.fillStyle = cell.color;
+    ctx.fillStyle = fillColor;
+    
     ctx.globalAlpha = opacity;
-    ctx.fillRect(cell.baseX, currentY, cell.size, cell.size);
+    
+    // Zaokrąglenie rogów dla lepszego efektu
+    const borderRadius = 2;
+    ctx.beginPath();
+    ctx.roundRect(cell.baseX, currentY, cell.size, cell.size, borderRadius);
+    ctx.fill();
     
     // Obramowanie
-    // ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    // ctx.lineWidth = 1;
-    // ctx.strokeRect(cell.baseX, currentY, cell.size, cell.size);
+    ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + colorIntensity * 0.1})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
     
     ctx.restore();
   });
 };
 
-// Rysowanie okręgu myszki (opcjonalne)
-const drawCircle = () => {
-  if (!circleCanvasRef.value || !isMouseOver.value) return;
+// Rysowanie okręgu myszki i fal
+const drawCircleAndWaves = () => {
+  if (!circleCanvasRef.value) return;
   
   const ctx = circleCanvasRef.value.getContext('2d');
   if (!ctx) return;
   
-  // Wyczyść canvas okręgu
+  // Wyczyść canvas
   ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
   
-  // Rysuj subtelny okrąg wokół myszki
-  ctx.beginPath();
-  const gradient = ctx.createRadialGradient(
-    mousePosition.value.x, mousePosition.value.y, 0,
-    mousePosition.value.x, mousePosition.value.y, gridConfig.influenceRadius
-  );
+  // Rysuj fale
+  waves.value.forEach(wave => {
+    const elapsed = Date.now() - wave.startTime;
+    if (!wave.active) return;
+    
+    const progress = elapsed / waveConfig.duration;
+    
+    // Przezroczystość zanika z czasem
+    const alpha = 0.3 * (1 - progress);
+    
+    // Grubość linii też zanika
+    const lineWidth = 2 * (1 - progress);
+    
+    // Rysuj okrąg fali
+    ctx.beginPath();
+    ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
+    
+    // Gradient dla fali
+    const gradient = ctx.createRadialGradient(
+      wave.x, wave.y, wave.radius * 0.8,
+      wave.x, wave.y, wave.radius
+    );
+    
+    gradient.addColorStop(0, `rgba(255, 99, 71, ${alpha})`);
+    gradient.addColorStop(1, `rgba(255, 99, 71, 0)`);
+    
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+    
+    // Delikatne wypełnienie
+    ctx.fillStyle = `rgba(255, 99, 71, ${alpha * 0.1})`;
+    ctx.fill();
+  });
   
-  gradient.addColorStop(0, 'rgba(255, 99, 71, 0.1)');
-  gradient.addColorStop(0.7, 'rgba(255, 99, 71, 0.05)');
-  gradient.addColorStop(1, 'rgba(255, 99, 71, 0)');
-  
-  ctx.fillStyle = gradient;
-  ctx.arc(
-    mousePosition.value.x, 
-    mousePosition.value.y, 
-    gridConfig.influenceRadius, 
-    0, 
-    Math.PI * 2
-  );
-  ctx.fill();
+  // Rysuj okrąg myszki (tylko gdy jest nad canvasem)
+  if (isMouseOver.value) {
+    ctx.beginPath();
+    const gradient = ctx.createRadialGradient(
+      mousePosition.value.x, mousePosition.value.y, 0,
+      mousePosition.value.x, mousePosition.value.y, gridConfig.influenceRadius
+    );
+    
+    gradient.addColorStop(0, 'rgba(255, 99, 71, 0.1)');
+    gradient.addColorStop(0.7, 'rgba(255, 99, 71, 0.05)');
+    gradient.addColorStop(1, 'rgba(255, 99, 71, 0)');
+    
+    ctx.fillStyle = gradient;
+    ctx.arc(
+      mousePosition.value.x, 
+      mousePosition.value.y, 
+      gridConfig.influenceRadius, 
+      0, 
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
 };
 
 // Aktualizacja pozycji myszki
@@ -201,31 +365,49 @@ const updateMousePosition = (e: MouseEvent) => {
   updateGridCells();
 };
 
-// Aktualizacja stanu kwadratów
+// Obsługa kliknięcia myszki - TWORZENIE FALI!
+const handleMouseClick = (e: MouseEvent) => {
+  if (!gridCanvasRef.value) return;
+  
+  const rect = gridCanvasRef.value.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  // Utwórz falę w miejscu kliknięcia
+  createWave(x, y);
+  
+  // Mały efekt wizualny - krótki błysk
+  if (circleCanvasRef.value) {
+    const ctx = circleCanvasRef.value.getContext('2d');
+    if (ctx) {
+      // Rysuj małe białe kółko w miejscu kliknięcia
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.fill();
+      
+      // Zniknie w następnej klatce
+    }
+  }
+};
+
+// Aktualizacja stanu kwadratów (tylko dla myszki)
 const updateGridCells = () => {
   const mouseX = mousePosition.value.x;
   const mouseY = mousePosition.value.y;
   
   gridCells.value.forEach(cell => {
-    // Środek kwadratu
     const cellCenterX = cell.baseX + cell.size / 2;
     const cellCenterY = cell.baseY + cell.size / 2;
     
-    // Oblicz odległość od myszki
     const distance = Math.sqrt(
       Math.pow(cellCenterX - mouseX, 2) + 
       Math.pow(cellCenterY - mouseY, 2)
     );
     
-    // Jeśli kwadrat jest w promieniu wpływu
     if (distance < gridConfig.influenceRadius) {
-      // Oblicz siłę podniesienia (1 na środku, 0 na krawędzi promienia)
       const force = 1 - (distance / gridConfig.influenceRadius);
-      
-      // Podnieś kwadrat (kwadratowa funkcja dla lepszego efektu)
       cell.targetLift = Math.pow(force, 2) * gridConfig.maxLift;
-      
-      // Zmień kolor na podstawie odległości
       const colorIntensity = Math.pow(force, 1.5);
       cell.color = interpolateColor(
         gridConfig.baseColor, 
@@ -233,7 +415,6 @@ const updateGridCells = () => {
         colorIntensity
       );
     } else {
-      // Resetuj do stanu spoczynku
       cell.targetLift = 0;
       cell.color = gridConfig.baseColor;
     }
@@ -242,7 +423,6 @@ const updateGridCells = () => {
 
 // Pomocnicza funkcja do interpolacji kolorów
 const interpolateColor = (color1: string, color2: string, factor: number): string => {
-  // Konwertuj hex na RGB
   const hexToRgb = (hex: string) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -265,7 +445,7 @@ const interpolateColor = (color1: string, color2: string, factor: number): strin
 // Pętla animacji
 const animate = () => {
   drawGrid();
-  drawCircle();
+  drawCircleAndWaves();
   animationFrameId.value = requestAnimationFrame(animate);
 };
 
@@ -273,13 +453,11 @@ const animate = () => {
 const handleMouseLeave = () => {
   isMouseOver.value = false;
   
-  // Resetuj wszystkie kwadraty
   gridCells.value.forEach(cell => {
     cell.targetLift = 0;
     cell.color = gridConfig.baseColor;
   });
   
-  // Wyczyść canvas okręgu
   if (circleCanvasRef.value) {
     const ctx = circleCanvasRef.value.getContext('2d');
     if (ctx) {
@@ -303,20 +481,20 @@ onMounted(() => {
     
     // Dodaj event listeners
     gridCanvasRef.value.addEventListener('mousemove', updateMousePosition);
+    gridCanvasRef.value.addEventListener('click', handleMouseClick);
     gridCanvasRef.value.addEventListener('mouseleave', handleMouseLeave);
     window.addEventListener('resize', handleResize);
   }
 });
 
 onUnmounted(() => {
-  // Zatrzymaj animację
   if (animationFrameId.value) {
     cancelAnimationFrame(animationFrameId.value);
   }
   
-  // Usuń event listeners
   if (gridCanvasRef.value) {
     gridCanvasRef.value.removeEventListener('mousemove', updateMousePosition);
+    gridCanvasRef.value.removeEventListener('click', handleMouseClick);
     gridCanvasRef.value.removeEventListener('mouseleave', handleMouseLeave);
   }
   
