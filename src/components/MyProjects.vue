@@ -90,9 +90,9 @@ const projectsText = computed(() => ({
     snapstatsText2: currentLang?.value === 'pl' ? 'Platforma SnapStats umożliwia użytkownikom tworzenie własnych portfolio, porównywanie swoich prac z pracami innych oraz czerpanie inspiracji ze społeczności. Kluczową funkcją jest możliwość przeglądania szczegółowych parametrów technicznych (danych EXIF) dowolnego zdjęcia, w tym modelu aparatu, ISO, czasu naświetlania i przysłony — co stanowi nieocenione źródło wiedzy i narzędzie do krytyki fotograficznej. Zarejestrowani użytkownicy mogą polubić zdjęcia, zapisywać je w ulubionych oraz otrzymywać spersonalizowane rekomendacje oparte na zbiorowych preferencjach społeczności. System został zaprojektowany z wyraźnym podziałem ról użytkowników (Gość, Użytkownik, Administrator) i obejmuje zaawansowane funkcje filtrowania, takie jak sortowanie zdjęć według marki i modelu sprzętu.' : 'The SnapStats platform allows users to curate their portfolios, compare their work with peers, and seek inspiration from the community. A core feature is the ability to view detailed technical parameters (EXIF data) of any photograph, including the camera model, ISO, shutter speed, and aperture—an invaluable resource for learning and critique. Registered users can like photos, save them to favorites, and receive personalized recommendations based on the community\'s collective preferences. The system is designed with distinct user roles (Guest, User, Administrator) and includes advanced filtering capabilities, such as sorting photos by equipment brand and model.',
     snapstatsText3: currentLang?.value === 'pl' ? 'Z technicznego punktu widzenia SnapStats został zbudowany w oparciu o nowoczesny i solidny stack technologiczny. Szybki i reaktywny frontend oparty jest na JavaScript i bibliotece ReactJS, a biblioteka komponentów Material UI zapewnia czysty i nowoczesny interfejs. Backend oraz warstwa danych wykorzystują platformę Firebase do bezpiecznego uwierzytelniania użytkowników oraz niezawodnego przechowywania danych w Firestore. Taki wybór architektury gwarantuje, że aplikacja jest wysoce skalowalna, bezpieczna i zapewnia ciągłą dostępność, umożliwiając efektywne przetwarzanie złożonych danych fotograficznych i społecznościowych.' : 'From a technical perspective, SnapStats is built on a robust and modern stack. The fast and reactive frontend is powered by JavaScript and the ReactJS library, with the Material UI component library ensuring a clean, modern interface. The backend and data layer leverage the Firebase platform for secure user Authentication and reliable data storage via Firestore. This architectural choice ensures the application is highly scalable, secure, and provides continuous availability for handling complex photographic and community data efficiently.',
     pocketPalDesc: currentLang?.value === 'pl' ? 'Śledź swoje wydatki i zarządzaj finansami za pomocą wizualizacji danych.' : 'Track your spending and manage finances with visualized data.',
-    pocketPalText1: currentLang?.value ==='pl' ? 'PocketPal to nowoczesna aplikacja webowa, którą stworzyliśmy w zespole razem z Marcelem Wójcikiem i Maciejem Ratajem, aby uprościć zarządzanie finansami osobistymi i rodzinnymi. Umożliwia użytkownikom śledzenie wydatków i przychodów, kategoryzowanie transakcji, wizualizowanie budżetów za pomocą interaktywnych wykresów, zarządzanie wspólnymi budżetami rodzinnymi oraz generowanie raportów w formacie PDF. Platforma oferuje intuicyjny interfejs z powiadomieniami o powodzeniu lub niepowodzeniu działań, dzięki czemu użytkownicy mają pełną kontrolę nad swoimi finansami.' : 'PocketPal is a modern web application we developed as a team with Marcel Wójcik and Maciej Rataj to simplify personal and family finance management. It allows users to track expenses and incomes, categorize transactions, visualize budgets with interactive charts, manage shared family budgets, and generate PDF reports. The platform features an intuitive interface with notifications for successful or failed actions, keeping users fully in control of their finances.',
-    pocketPalText2: currentLang?.value ==='pl' ? 'Użytkownicy mogą rejestrować się i logować za pomocą tradycyjnych formularzy lub kont Google, resetować hasła oraz zarządzać swoimi profilami. Funkcja rodzinna pozwala na tworzenie lub dołączanie do wspólnych grup budżetowych, monitorowanie zbiorczych wydatków, zapraszanie członków za pomocą kodów oraz zarządzanie rolami w grupie. PocketPal łączy prostotę, interaktywność i praktyczne narzędzia finansowe, pomagając osobom i rodzinom zachować porządek i świadomość finansową.' : 'Users can register and log in via traditional forms or Google accounts, reset passwords, and manage their profiles. The family feature lets users create or join shared budget groups, monitor collective spending, invite members via codes, and manage roles within the group. PocketPal combines simplicity, interactivity, and practical financial tools to help individuals and families stay organized and financially aware.',
-    pocketPalText3: currentLang?.value ==='pl' ? 'Po stronie technicznej PocketPal został zbudowany przy użyciu React i Vite, co zapewnia szybki i reaktywny frontend, Mantine do komponentów UI, Nivo do interaktywnych wykresów oraz Firebase do usług backendowych, w tym Firestore do przechowywania danych i Authentication do bezpiecznego logowania. Aplikacja wykorzystuje również React Router do nawigacji oraz jsPDF do generowania raportów PDF. Taki stack technologiczny gwarantuje responsywną, skalowalną i bezpieczną aplikację, zdolną do efektywnego przetwarzania danych finansowych użytkowników i rodzin.' : 'On the technical side, PocketPal is built with React and Vite for a fast and reactive frontend, Mantine for UI components, Nivo for interactive charts, and Firebase for backend services including Firestore for data storage and Authentication for secure login. The app also uses React Router for navigation and jsPDF for generating PDF reports. This stack ensures a responsive, scalable, and secure application capable of handling user and family financial data efficiently.',
+    pocketPalText1: currentLang?.value === 'pl' ? 'PocketPal to nowoczesna aplikacja webowa, którą stworzyliśmy w zespole razem z Marcelem Wójcikiem i Maciejem Ratajem, aby uprościć zarządzanie finansami osobistymi i rodzinnymi. Umożliwia użytkownikom śledzenie wydatków i przychodów, kategoryzowanie transakcji, wizualizowanie budżetów za pomocą interaktywnych wykresów, zarządzanie wspólnymi budżetami rodzinnymi oraz generowanie raportów w formacie PDF. Platforma oferuje intuicyjny interfejs z powiadomieniami o powodzeniu lub niepowodzeniu działań, dzięki czemu użytkownicy mają pełną kontrolę nad swoimi finansami.' : 'PocketPal is a modern web application we developed as a team with Marcel Wójcik and Maciej Rataj to simplify personal and family finance management. It allows users to track expenses and incomes, categorize transactions, visualize budgets with interactive charts, manage shared family budgets, and generate PDF reports. The platform features an intuitive interface with notifications for successful or failed actions, keeping users fully in control of their finances.',
+    pocketPalText2: currentLang?.value === 'pl' ? 'Użytkownicy mogą rejestrować się i logować za pomocą tradycyjnych formularzy lub kont Google, resetować hasła oraz zarządzać swoimi profilami. Funkcja rodzinna pozwala na tworzenie lub dołączanie do wspólnych grup budżetowych, monitorowanie zbiorczych wydatków, zapraszanie członków za pomocą kodów oraz zarządzanie rolami w grupie. PocketPal łączy prostotę, interaktywność i praktyczne narzędzia finansowe, pomagając osobom i rodzinom zachować porządek i świadomość finansową.' : 'Users can register and log in via traditional forms or Google accounts, reset passwords, and manage their profiles. The family feature lets users create or join shared budget groups, monitor collective spending, invite members via codes, and manage roles within the group. PocketPal combines simplicity, interactivity, and practical financial tools to help individuals and families stay organized and financially aware.',
+    pocketPalText3: currentLang?.value === 'pl' ? 'Po stronie technicznej PocketPal został zbudowany przy użyciu React i Vite, co zapewnia szybki i reaktywny frontend, Mantine do komponentów UI, Nivo do interaktywnych wykresów oraz Firebase do usług backendowych, w tym Firestore do przechowywania danych i Authentication do bezpiecznego logowania. Aplikacja wykorzystuje również React Router do nawigacji oraz jsPDF do generowania raportów PDF. Taki stack technologiczny gwarantuje responsywną, skalowalną i bezpieczną aplikację, zdolną do efektywnego przetwarzania danych finansowych użytkowników i rodzin.' : 'On the technical side, PocketPal is built with React and Vite for a fast and reactive frontend, Mantine for UI components, Nivo for interactive charts, and Firebase for backend services including Firestore for data storage and Authentication for secure login. The app also uses React Router for navigation and jsPDF for generating PDF reports. This stack ensures a responsive, scalable, and secure application capable of handling user and family financial data efficiently.',
     pongSTM32Desc: currentLang?.value === 'pl' ? 'Gra Pong odtworzona na mikrokontrolerze STM32.' : 'Fun Pong Game recreated on STM32 microcontroller.',
     pongSTM32Text1: currentLang?.value === 'pl' ? 'Projekt PONG STM32 został stworzony w ramach zajęć na uczelni technicznej. Zadaniem było opracowanie programu dla płytki rozwojowej STM32 w języku C. Postanowiłem stworzyć coś ciekawego — grę Pong obsługującą dwóch graczy i wyposażoną w prostą sztuczną inteligencję. Gra zawiera system punktacji, możliwość resetu gry oraz mechanikę odbijania piłki reagującą na ruch paletek. Sterowanie realizowane jest za pomocą potencjometrów. Projekt był bardzo angażującym doświadczeniem w programowaniu układów wbudowanych, pozwalającym pogłębić wiedzę na temat niskopoziomowej interakcji ze sprzętem oraz tworzenia oprogramowania dla mikrokontrolerów.' : 'The PONG STM32 project was created as part of coursework at the university of technology. The task was to develop a program for the STM32 development board in C language. I decided to create something interesting — a Pong game that supports two players and includes a simple AI. The game features scorekeeping, game reset functionality, and ball bouncing mechanics that respond to the paddle movement. Control is handled via potentiometers. This project was a very engaging experience in embedded programming, allowing me to deepen my understanding of low-level hardware interaction and microcontroller software development.',
     mazesolversDesc: currentLang?.value === 'pl' ? 'Cztery aplikacje MazeSolver stworzone w ramach mojej pracy magisterskiej.' : 'Four MazeSolver apps made as part of my Master\'s thesis.',
@@ -287,245 +287,301 @@ const showMore = ref(false);
     <dialog id="seenema_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt}} - Seenema</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                class="w-full md:aspect-[16/8] aspect-[4/3]">
+                :loop="true">
+                <SwiperSlide>
                     <img :src="seenemaSwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="seenemaSwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="seenemaSwiperImg3" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="seenemaSwiperImg4" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.seenemaText1 }}
-            </p>
+            <div class="modal-content">
 
-            <p class="pt-8">{{ projectsText.seenemaText2 }}</p>
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - Seenema 🍿</h3>
+
+                <p class="pt-8">{{ projectsText.seenemaText1 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.seenemaText2 }}</p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- Quikbook Modal -->
     <dialog id="quikbook_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt}} - Quikbook</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="quikbookSwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="quikbookSwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="quikbookSwiperImg3" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="quikbookSwiperImg4" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="quikbookSwiperImg5" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.quikbookText1 }}
-            </p>
+            <div class="modal-content">
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - Quikbook ☑️</h3>
 
-            <p class="pt-8">{{ projectsText.quikbookText2 }}
-            </p>
+                <p class="pt-8">{{ projectsText.quikbookText1 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.quikbookText2 }}
+                </p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- PocketPal Modal -->
     <dialog id="pocketpal_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt}} - PocketPal</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pocketPalSwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pocketPalSwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pocketPalSwiperImg3" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pocketPalSwiperImg4" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pocketPalSwiperImg5" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.pocketPalText1 }}
-            </p>
+            <div class="modal-content">
 
-            <p class="pt-8">{{ projectsText.pocketPalText2 }}
-            </p>
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - PocketPal 💵</h3>
 
-            <p class="pt-8">{{ projectsText.pocketPalText3 }}
-            </p>
+                <p class="pt-8">{{ projectsText.pocketPalText1 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.pocketPalText2 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.pocketPalText3 }}
+                </p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- SnapStats Modal -->
     <dialog id="snapstats_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt }} - SnapStats</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg3" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg4" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg5" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg6" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="snapStatsSwiperImg7" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.snapstatsText1 }}
-            </p>
+            <div class="modal-content">
 
-            <p class="pt-8">{{ projectsText.snapstatsText2 }}
-            </p>
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - SnapStats 📸</h3>
 
-            <p class="pt-8">{{ projectsText.snapstatsText3 }}
-            </p>
+                <p class="pt-8">{{ projectsText.snapstatsText1 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.snapstatsText2 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.snapstatsText3 }}
+                </p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- RatePlay Modal -->
     <dialog id="rateplay_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt }} - RatePlay</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg3" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg4" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg5" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg6" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="ratePlaySwiperImg7" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.rateplayText1 }}
-            </p>
+            <div class="modal-content">
 
-            <p class="pt-8">{{ projectsText.rateplayText2 }}
-            </p>
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - RatePlay 🎮</h3>
 
-            <p class="pt-8">{{ projectsText.rateplayText3 }}
-            </p>
+                <p class="pt-8">{{ projectsText.rateplayText1 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.rateplayText2 }}
+                </p>
+
+                <p class="pt-8">{{ projectsText.rateplayText3 }}
+                </p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- Pong Modal -->
     <dialog id="pongstm32_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt }} - Pong STM32</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pongSTM32SwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="pongSTM32SwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.pongSTM32Text1 }}</p>
+            <div class="modal-content">
+
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - Pong STM32 🏓</h3>
+
+                <p class="pt-8">{{ projectsText.pongSTM32Text1 }}</p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- MazeSolver Modals -->
     <dialog id="mazesolvers_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt }} - MazeSolver</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="mazesolversSwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="mazesolversSwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.mazesolversText1 }}</p>
+            <div class="modal-content">
+
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - MazeSolver 🧩</h3>
+
+                <p class="pt-8">{{ projectsText.mazesolversText1 }}</p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
     <!-- Asteroids Modal -->
     <dialog id="asteroids_modal" class="modal modal-middle">
         <div class="modal-box w-11/12 max-w-5xl">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-6">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost fixed right-6 top-6 z-10 w-10 h-10"><b>✕</b></button>
             </form>
-            <h3 class="text-2xl font-bold pb-4">{{ projectsText.projekt }} - Asteroids</h3>
             <Swiper :modules="[Navigation, Pagination]" :navigation="true" :pagination="{ clickable: true }"
-                :loop="true" class="w-full sm:h-[400px] h-[400px]">
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                :loop="true" class="w-full md:aspect-[16/8] aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="asteroidsSwiperImg1" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="asteroidsSwiperImg2" class="w-full h-full object-cover" />
                 </SwiperSlide>
-                <SwiperSlide class="aspect-video sm:aspect-[4/3]">
+                <SwiperSlide>
                     <img :src="asteroidsSwiperImg3" class="w-full h-full object-cover" />
                 </SwiperSlide>
             </Swiper>
-            <p class="pt-8">{{ projectsText.asteroidsText1 }}</p>
+            <div class="modal-content">
+
+                <h3 class="text-2xl font-bold">{{ projectsText.projekt }} - Asteroids 👾</h3>
+
+                <p class="pt-8">{{ projectsText.asteroidsText1 }}</p>
+            </div>
         </div>
+        <form method="dialog" class="modal-backdrop">
+            <button class="close-button"></button>
+        </form>
     </dialog>
 
 </template>
@@ -580,5 +636,57 @@ const showMore = ref(false);
     opacity: 0;
     transform: translateY(-10px);
     transition: all 0.3s ease;
+}
+
+.modal-box {
+    padding: 0;
+    /* scrollbar-width: none; */
+    border: none;
+}
+
+.modal-box:focus {
+    outline: none;
+    /* usun obramowanie focus */
+    border: none;
+}
+
+.modal-box .btn:hover {
+    border-color: tomato !important;
+}
+
+.modal-box .btn:focus {
+    border-color: tomato !important;
+    outline: none;
+}
+
+.card:focus {
+    outline: none;
+    /* usun obramowanie focus */
+    border: none;
+}
+
+.modal-box::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-content {
+    padding: 1.5rem;
+}
+
+.btn:focus {
+    outline: none;
+    /* border-color: tomato !important; */
+}
+
+dialog .close-button {
+    outline: none;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+dialog .close-button:focus {
+    outline: none;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
 }
 </style>

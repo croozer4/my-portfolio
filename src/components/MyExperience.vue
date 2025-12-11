@@ -10,7 +10,10 @@ const currentLang = inject<Ref<'pl' | 'en'>>('currentLang');
 
 const experienceText = computed(() => ({
     title: currentLang?.value === 'pl' ? 'Doświadczenie' : "My Experience",
-    description: currentLang?.value === 'pl' ? 'Absolwent IT z pasją do technologii webowych i nie tylko. Jestem w pełni zmotywowany, aby zdobyć cenne doświadczenie zawodowe. Moje mocne strony to zaangażowanie, szybkie uczenie się oraz dążenie do innowacyjnych i bezbłędnych rozwiązań. Posiadam już początkowe doświadczenie zawodowe, zdobyte częściowo poprzez międzynarodowe staże.' : 'A graduate in IT with a passion for web technologies and beyond. I am fully motivated to gain valuable professional experience. My strengths include dedication, quick learning, and a commitment to innovative and flawless solutions. I already have initial professional experience, gained partly through international internships.',
+    description: currentLang?.value === 'pl' ? 'Silnie zmotywowany absolwent informatyki (magister i inżynier), specjalizujący się w programowaniu aplikacji webowych i biznesowych. Świetnie odnajduję się w roli full-stack developera.' : 'A highly motivated IT Graduate (Master\'s and Bachelor\'s degrees in Computer Science) specializing in Web Application Programming and Business Applications. I excel as a Full-stack Developer.',
+    description2: currentLang?.value === 'pl' ? 'Moją największą zaletą jest trzymanie się zasady „zrobić raz a porządnie” oraz szybkie przyswajanie nowych technologii.' : 'My core strength is my dedication to the "do it once, do it right" principle, combined with a quick learning ability.',
+    description3: currentLang?.value === 'pl' ? 'Mam za sobą wartościowe, międzynarodowe staże IT w Portugalii i Wielkiej Brytanii, które dały mi praktyczne umiejętności rozwiązywania problemów i szersze spojrzenie na branżę.' : 'My professional journey includes valuable international IT internships in Portugal and the UK , providing me with real-world problem-solving skills and a broader perspective.',
+    description4: currentLang?.value === 'pl' ? 'Jestem gotów wnieść świeże pomysły i solidne umiejętności techniczne do wymagającej roli developera.' : 'I am ready to bring my innovative approach and technical proficiency to a challenging developer role.',
     technik: currentLang?.value === 'pl' ? 'Technik Informatyk (TZN)' : 'IT Technician (TZN)',
     inżynier: currentLang?.value === 'pl' ? 'Inżynier (PCz)' : 'Engineer (PCz)',
     magister: currentLang?.value === 'pl' ? 'Magister (PCz)' : 'Master’s Degree (PCz)',
@@ -27,9 +30,12 @@ const experienceText = computed(() => ({
             <!-- ciemny kolor -->
             <h1 class="!text-5xl font-bold my-8 pl-8 text-white pt-8">{{ experienceText.title }}</h1>
 
-            <!-- cos tu napisz -->
+            <!-- cos tu napisz -->  
 
             <p class="pl-8 pr-8">{{ experienceText.description }}</p>
+            <p class="pl-8 pr-8 pt-4">{{ experienceText.description2 }}</p>
+            <p class="pl-8 pr-8 pt-4">{{ experienceText.description3 }}</p>
+            <p class="pl-8 pr-8 pt-4 pb-8">{{ experienceText.description4 }}</p>
 
             <div class="w-full flex p-8 pl-0">
 
@@ -44,7 +50,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">KB Systems</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">KB Systems</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -58,7 +64,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">Chip7</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">Chip7</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -72,7 +78,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">TK Laptops</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">TK Laptops</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -86,7 +92,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">{{ experienceText.technik }}</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">{{ experienceText.technik }}</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -100,7 +106,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">KB Systems</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">KB Systems</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -114,7 +120,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">{{ experienceText.inżynier }}</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">{{ experienceText.inżynier }}</div>
                         <hr />
                     </li>
                     <li class="flex-1">
@@ -128,7 +134,7 @@ const experienceText = computed(() => ({
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="timeline-end timeline-box text-center text-sm">{{ experienceText.magister }}</div>
+                        <div class="timeline-end timeline-box text-center text-sm bg-tomato">{{ experienceText.magister }}</div>
                     </li>
                 </ul>
             </div>
@@ -151,4 +157,14 @@ const experienceText = computed(() => ({
   color: tomato !important;
 }
 
+.bg-tomato {
+  background-color: tomato !important;
+  /* font-weight: bold; */
+  border: none !important;
+  margin-top: 15px;
+  padding: 0.6em 1.2em;
+    /* font-size: 1em; */
+    font-weight: 500;
+margin-bottom: 15px;
+}
 </style>

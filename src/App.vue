@@ -40,4 +40,9 @@ provide('currentLang', currentLang);
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
 }
+
+::selection {
+  background-color: tomato;
+  color: white;
+}
 </style>
