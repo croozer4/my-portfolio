@@ -31,6 +31,23 @@ const downloadResume = () => {
 };
 
 // gridzik
+
+// DETEKCJA MOBILE/TABLET
+const isMobileOrTablet = ref(false);
+const checkMobile = () => {
+    // Sprawdzamy szerokość ekranu oraz touch capability
+    const width = window.innerWidth;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Jeśli szerokość <= 1024px LUB urządzenie ma touch, traktujemy jako mobile/tablet
+    isMobileOrTablet.value = width <= 1024 || hasTouch;
+
+    console.log('Mobile/Tablet detection:', {
+        width,
+        hasTouch,
+        isMobileOrTablet: isMobileOrTablet.value
+    });
+};
 // Nowe refy dla canvas
 const gridCanvasRef = ref<HTMLCanvasElement | null>(null);
 const circleCanvasRef = ref<HTMLCanvasElement | null>(null);
@@ -218,115 +235,64 @@ const drawGrid = () => {
     const ctx = gridCanvasRef.value.getContext('2d');
     if (!ctx) return;
 
-    // Wyczyść canvas
     ctx.clearRect(0, 0, gridCanvasRef.value.width, gridCanvasRef.value.height);
 
-    // Aktualizuj fale
     updateWaves();
 
-    // Rysuj wszystkie kwadraty
+    // NA MOBILE: Nie aktualizujemy lift z myszy, tylko z fal
+    if (!isMobileOrTablet.value) {
+        gridCells.value.forEach(cell => {
+            cell.lift += (cell.targetLift - cell.lift) * gridConfig.transitionSpeed;
+        });
+    }
+
+    // Rysuj wszystkie kwadraty z optymalizacją
+    const oldFillStyle = ctx.fillStyle;
+    const oldGlobalAlpha = ctx.globalAlpha;
+
     gridCells.value.forEach(cell => {
-        // Płynna animacja podnoszenia od myszki
-        cell.lift += (cell.targetLift - cell.lift) * gridConfig.transitionSpeed;
-
-        // Całkowite podniesienie = myszka + fala
-    
-        const totalLift = cell.lift + cell.waveLift;
-
-        // Oblicz aktualną pozycję z podniesieniem
+        // Na mobile używamy tylko waveLift, na desktop mysz + waveLift
+        const totalLift = isMobileOrTablet.value ? cell.waveLift : cell.lift + cell.waveLift;
         const currentY = cell.baseY - totalLift;
-
-        // Oblicz przezroczystość na podstawie podniesienia
-        const opacity = 0.7 + (totalLift / (gridConfig.maxLift + waveConfig.maxLift)) * 0.3;
-
-        // Intensywność koloru na podstawie podniesienia (0-1)
         const colorIntensity = Math.min(1, totalLift / 30);
 
-        // wylosuj wartosc od 0 do 10 jesli bedzie 5 to dodaj lift +5
-        
-        
-
-        // Rysuj kwadrat
-        // ctx.save();
-
-        // Cienie
-        // ctx.shadowColor = `rgba(0, 0, 0, 0.3)`;
-        // ctx.shadowOffsetY = 5;
-
-        // JEDNOLITY KOLOR - UŻYJ FUNKCJI interpolateColor
-        // colorIntensity = 0 → baseColor, colorIntensity = 1 → hoverColor
-        const fillColor = interpolateColor(
+        ctx.fillStyle = interpolateColor(
             gridConfig.baseColor,
             gridConfig.hoverColor,
             colorIntensity
         );
-
-        ctx.fillStyle = fillColor;
-
-        ctx.globalAlpha = opacity;
-
-        // Zaokrąglenie rogów dla lepszego efektu
-        // const borderRadius = 90;
-        ctx.beginPath();
-        ctx.roundRect(cell.baseX, currentY, cell.size, cell.size);
-        ctx.fill();
-
-        // Obramowanie
-        // ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + colorIntensity * 0.1})`;
-        // ctx.lineWidth = 1;
-        // ctx.stroke();
-
-        // ctx.restore();
+        
+        ctx.globalAlpha = 0.7 + (colorIntensity * 0.3);
+        ctx.fillRect(cell.baseX, currentY, cell.size, cell.size);
     });
-};
 
-// Rysowanie okręgu myszki i fal
+    ctx.fillStyle = oldFillStyle;
+    ctx.globalAlpha = oldGlobalAlpha;
+};
 const drawCircleAndWaves = () => {
     if (!circleCanvasRef.value) return;
 
     const ctx = circleCanvasRef.value.getContext('2d');
     if (!ctx) return;
 
-    // Wyczyść canvas
     ctx.clearRect(0, 0, circleCanvasRef.value.width, circleCanvasRef.value.height);
 
-    // Rysuj fale
+    // Rysuj fale (działa na mobile i desktop)
     waves.value.forEach(wave => {
         const elapsed = Date.now() - wave.startTime;
         if (!wave.active) return;
 
         const progress = elapsed / waveConfig.duration;
-
-        // Przezroczystość zanika z czasem
         const alpha = 0.3 * (1 - progress);
 
-        // Grubość linii też zanika
-        // const lineWidth = 2 * (1 - progress);
-
-        // Rysuj okrąg fali
         ctx.beginPath();
         ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
-
-        // Gradient dla fali
-        // const gradient = ctx.createRadialGradient(
-        //   wave.x, wave.y, wave.radius * 0.8,
-        //   wave.x, wave.y, wave.radius
-        // );
-
-        // gradient.addColorStop(0, `rgba(255, 99, 71, ${alpha})`);
-        // gradient.addColorStop(1, `rgba(255, 99, 71, 0)`);
-
-        // ctx.strokeStyle = gradient;
-        // ctx.lineWidth = lineWidth;
-        // ctx.stroke();
-
-        // Delikatne wypełnienie
         ctx.fillStyle = `rgba(255, 99, 71, ${alpha * 0.1})`;
         ctx.fill();
     });
 
-    // Rysuj okrąg myszki (tylko gdy jest nad canvasem)
-    if (isMouseOver.value) {
+    // Rysuj okrąg myszki TYLKO na desktop
+    if (!isMobileOrTablet.value && isMouseOver.value) {
         ctx.beginPath();
         const gradient = ctx.createRadialGradient(
             mousePosition.value.x, mousePosition.value.y, 0,
@@ -351,6 +317,7 @@ const drawCircleAndWaves = () => {
 
 // Aktualizacja pozycji myszki
 const updateMousePosition = (e: MouseEvent) => {
+    if (isMobileOrTablet.value) return;
     if (!gridCanvasRef.value) return;
 
     const rect = gridCanvasRef.value.getBoundingClientRect();
@@ -464,6 +431,7 @@ const handleResize = () => {
     // initCanvas();
     if (resizeTimeout) clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
+        checkMobile();
         initCanvas();
     }, 150);
 };
@@ -471,7 +439,9 @@ const handleResize = () => {
 // Lifecycle hooks
 onMounted(() => {
     initCanvas();
+    checkMobile();
 
+    window.addEventListener('resize', handleResize);
     // Rozpocznij animację
     if (gridCanvasRef.value) {
         animate();
@@ -480,7 +450,6 @@ onMounted(() => {
         gridCanvasRef.value.addEventListener('mousemove', updateMousePosition);
         gridCanvasRef.value.addEventListener('click', handleMouseClick);
         gridCanvasRef.value.addEventListener('mouseleave', handleMouseLeave);
-        window.addEventListener('resize', handleResize);
     }
 });
 
@@ -522,7 +491,7 @@ onUnmounted(() => {
                     <button class="btn-c-filled btn w-[45%] sm:w-auto" @click="scrollToContact">{{
                         heroText.buttonContact }}</button>
                     <button class="btn-c-outline btn w-[45%] sm:w-auto" @click="downloadResume">{{ heroText.buttonResume
-                    }}
+                        }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
